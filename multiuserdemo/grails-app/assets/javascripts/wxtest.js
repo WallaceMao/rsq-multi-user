@@ -1,0 +1,21 @@
+!
+    function(a, b, c) {
+        function d(a) {
+            var c = "default";
+            a.self_redirect === !0 ? c = "true": a.self_redirect === !1 && (c = "false");
+            var d = b.createElement("iframe"),
+                e = "http://localhost:8080/multiuserdemo/userInfo/testBlock?appid=" + a.appid + "&scope=" + a.scope + "&redirect_uri=" + a.redirect_uri + "&state=" + a.state + "&login_type=jssdk&self_redirect=" + c;
+            e += a.style ? "&style=" + a.style: "",
+                e += a.href ? "&href=" + a.href: "",
+                d.src = e,
+                d.frameBorder = "0",
+                d.allowTransparency = "true",
+                d.scrolling = "no",
+                d.width = "300px",
+                d.height = "400px";
+            var f = b.getElementById(a.id);
+            f.innerHTML = "",
+                f.appendChild(d)
+        }
+        a.WxLogin = d
+    } (window, document);
