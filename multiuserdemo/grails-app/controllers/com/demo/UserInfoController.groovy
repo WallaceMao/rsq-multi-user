@@ -9,6 +9,7 @@ class UserInfoController {
 
     def index() {
         User user = springSecurityService.getCurrentUser()
+
         log.info("------user.username:${user.username}")
         render(view: "index", model: [tag: 'index', user: user])
     }
@@ -50,7 +51,7 @@ class UserInfoController {
     }
 
     def testBlock(){
-        Thread.sleep(5000);
+        println "--------====dddddooooo="
         render "success testBlock ${new Date()}"
     }
 }

@@ -7,10 +7,10 @@ import grails.test.spock.IntegrationSpec
 import spock.lang.IgnoreRest
 import spock.lang.Shared
 
-class MidUserServiceIntegrationSpec extends IntegrationSpec {
+class UserBizServiceIntegrationSpec extends IntegrationSpec {
 
 //    static transactional = false
-    def midUserService
+    def userBizService
 
     @Shared CommonUser userWithoutSuperUser
     @Shared SuperUser superUser1
@@ -52,7 +52,7 @@ class MidUserServiceIntegrationSpec extends IntegrationSpec {
 //        }
 
         when:
-        DemoUser user = midUserService.createDemoUser()
+        DemoUser user = userBizService.createDemoUser()
 
         then:
         user != null
@@ -63,13 +63,13 @@ class MidUserServiceIntegrationSpec extends IntegrationSpec {
 //        setupData()
 
         when:
-        def siblings = midUserService.getSiblingUsers(null)
+        def siblings = userBizService.getSiblingUsers(null)
 
         then:
         siblings == null
 
         when:
-        siblings = midUserService.getSiblingUsers(user1WithSuperUser1)
+        siblings = userBizService.getSiblingUsers(user1WithSuperUser1)
 
         then:
         siblings.size() == 2

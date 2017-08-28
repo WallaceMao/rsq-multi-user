@@ -21,13 +21,6 @@ environments {
             dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
             url = "jdbc:mysql://localhost:3306/multi_user_demo_dev?autoReconnect=true&characterEncoding=utf-8&useSSL=false"
         }
-        dataSource_rsqbeta {
-            dbCreate = "update"
-            driverClassName = "com.mysql.jdbc.Driver"
-            url = "jdbc:mysql://123.56.141.252:3306/taskmanagement?autoReconnect=true&characterEncoding=utf-8&useSSL=false"
-            username = "walluser"
-            password = "create640321"
-        }
     }
     test {
         dataSource {

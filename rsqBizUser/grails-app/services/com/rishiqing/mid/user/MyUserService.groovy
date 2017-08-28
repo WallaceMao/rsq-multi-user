@@ -17,7 +17,7 @@ class MyUserService {
         return "----this is a test text: user is ${u.realName}, loginUser is ${loginUser.username}"
     }
 
-    def testTransction(){
+    def testTransaction(){
         CommonUser u = CommonUser.findByUsername("user@qq.com")
 
         u.realName = "transactionUser1----"

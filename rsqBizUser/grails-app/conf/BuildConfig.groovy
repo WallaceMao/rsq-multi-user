@@ -50,12 +50,12 @@ grails.project.dependency.resolution = {
         /**
          * | Failure:  test demoUser create(com.rishiqing.test.it.user.MidUserServiceIntegrationSpec)
          |  org.springframework.dao.DataIntegrityViolationException: not-null property references a null or transient value : com.rishiqing.domain.user.DemoUser.address; nested exception is org.hibernate.PropertyValueException: not-null property references a null or transient value : com.rishiqing.domain.user.DemoUser.address
-         at com.rishiqing.mid.user.MidUserService$$EQRbHaTP.$tt__createDemoUser(MidUserService.groovy:24)
+         at com.rishiqing.mid.user.UserBizService$$EQRbHaTP.$tt__createDemoUser(UserBizService.groovy:24)
          at com.rishiqing.test.it.user.MidUserServiceIntegrationSpec.test demoUser create(MidUserServiceIntegrationSpec.groovy:55)
          Caused by: org.hibernate.PropertyValueException: not-null property references a null or transient value : com.rishiqing.domain.user.DemoUser.address
          ... 2 more
          */
-        test ":tomcat:7.0.55.3" // or ":tomcat:8.0.22"
+        test ":tomcat:8.0.22" // or ":tomcat:8.0.22"
 
         build(":release:3.1.2",
               ":rest-client-builder:2.1.1") {

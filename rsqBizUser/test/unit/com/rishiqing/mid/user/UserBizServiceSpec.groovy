@@ -7,23 +7,19 @@ import com.rishiqing.domain.user.SuperUser
 import com.rishiqing.domain.user.Team
 import com.rishiqing.domain.user.User
 import com.rishiqing.mid.UsefulSpecification
-import com.rishiqing.mid.dao.DaoUserService
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.runtime.FreshRuntime
 import spock.lang.Ignore
-import spock.lang.IgnoreRest
 import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Unroll
 
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @FreshRuntime
-@TestFor(MidUserService)
+@TestFor(UserBizService)
 @Mock([User, CommonUser, SuperUser, Team, Role, DemoUser])
-class MidUserServiceSpec extends UsefulSpecification {
+class UserBizServiceSpec extends UsefulSpecification {
 
     //  for getters
     @Shared CommonUser userWithoutSuperUser
