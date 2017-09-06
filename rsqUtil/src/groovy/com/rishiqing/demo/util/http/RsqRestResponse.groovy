@@ -1,8 +1,12 @@
 package com.rishiqing.demo.util.http
 
 import com.mashape.unirest.http.HttpResponse
+import groovy.json.JsonSlurper
+import org.codehaus.groovy.grails.web.converters.ConverterUtil
+import org.codehaus.groovy.grails.web.json.JSONElement
 import org.codehaus.groovy.grails.web.json.JSONException
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by  on 2017/8/15.Wallace
@@ -13,7 +17,8 @@ class RsqRestResponse {
     String statusText
     String body
     Map headers
-    JSONObject json
+    JSONElement json
+    Map jsonMap
 
     RsqRestResponse(HttpResponse unirestResponse) {
         this.unirestResponse = unirestResponse
@@ -23,14 +28,30 @@ class RsqRestResponse {
         this.headers = unirestResponse.headers
     }
 
-    JSONObject getJson(){
+    JSONElement getJson(){
         if(!json){
             try {
                 this.json = new JSONObject(this.body)
             } catch (JSONException e){
+                try {
+                    this.json = new JSONArray(this.body)
+                } catch (JSONException ex){
+                    this.json = null
+                }
             }
         }
 
         return this.json
+    }
+
+    Map getJsonMap(){
+        JSONElement ele = this.json
+        if(ele == null){
+            return null;
+        }
+        def jsonSlurper = new JsonSlurper()
+        this.jsonMap = (Map)jsonSlurper.parseText(json.toString())
+
+        return this.jsonMap
     }
 }

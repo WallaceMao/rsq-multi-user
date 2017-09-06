@@ -1,4 +1,4 @@
-package com.rishiqing.test.functional.web.util
+package com.rishiqing.test.functional.util
 
 import com.mysql.jdbc.Driver
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource

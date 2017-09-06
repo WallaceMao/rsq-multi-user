@@ -4,12 +4,10 @@ import com.rishiqing.test.functional.ConfigUtil
 import com.rishiqing.test.functional.web.page.IndexPage
 import com.rishiqing.test.functional.web.page.LoginAndRegisterPage
 import com.rishiqing.test.functional.web.page.MainPage
-import com.rishiqing.test.functional.web.util.SqlPrepare
-import com.rishiqing.test.functional.web.util.SqlUtil
+import com.rishiqing.test.functional.util.SqlPrepare
+import com.rishiqing.test.functional.util.SqlUtil
 import com.rishiqing.test.functional.web.util.WebJs
 import geb.spock.GebSpec
-import spock.lang.Ignore
-import spock.lang.IgnoreRest
 import spock.lang.Shared
 
 /**

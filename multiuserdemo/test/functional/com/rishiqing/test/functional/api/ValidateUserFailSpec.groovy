@@ -9,7 +9,7 @@ import spock.lang.Unroll
 /**
  * Created by  on 2017/8/15.Wallace
  */
-@Ignore
+//@Ignore
 class ValidateUserFailSpec extends BaseApiGebSpec {
 
     def setupSpec(){

@@ -6,6 +6,7 @@ package com.rishiqing.demo.util.http
 class RsqRestRequest {
     def headerMap = [:]
     def bodyMap = [:]
+    def queryMap = [:]
     def cookies = []
 
     def header(p1, p2){
@@ -27,5 +28,9 @@ class RsqRestRequest {
 
     def cookies(cookieList){
         cookies += cookieList
+    }
+
+    def queryParams(Map params){
+        queryMap << params
     }
 }

@@ -74,7 +74,9 @@ class RsqRestUtil {
     }
 
     static private RsqRestResponse doGet(String url, RsqRestRequest delegateRequest){
-        HttpRequest unirestReq = Unirest.get(url)
+        String paramsUrl = handleQueryParams(url, delegateRequest)
+
+        HttpRequest unirestReq = Unirest.get(paramsUrl)
 
         handleHeader(unirestReq, delegateRequest)
         handleCookie(delegateRequest)
@@ -87,7 +89,9 @@ class RsqRestUtil {
 
     static private RsqRestResponse doPost(String url, RsqRestRequest delegateRequest){
         //  use Unirest to send request
-        HttpRequestWithBody unirestReq = Unirest.post(url)
+        String paramsUrl = handleQueryParams(url, delegateRequest)
+
+        HttpRequestWithBody unirestReq = Unirest.post(paramsUrl)
 
         handleHeader(unirestReq, delegateRequest)
         handleBody(unirestReq, delegateRequest)
@@ -119,6 +123,20 @@ class RsqRestUtil {
             throw new RuntimeException("unsupported http Content-Type header")
         }
         return request
+    }
+
+    static private String handleQueryParams(String oldUrl, RsqRestRequest delegateRequest){
+        def map = delegateRequest.queryMap
+        String appenUrl = map.collect {it ->
+            String newKey = URLEncoder.encode((String)it.key, 'utf-8')
+            String newValue = URLEncoder.encode((String)it.value, 'utf-8')
+            "${newKey}=${newValue}"
+        }.join("&")
+        String sep = '?'
+        if(oldUrl.contains('?')){
+            sep = '&'
+        }
+        "${oldUrl}${sep}${appenUrl}"
     }
 
     static private void handleCookie(RsqRestRequest delegateRequest){

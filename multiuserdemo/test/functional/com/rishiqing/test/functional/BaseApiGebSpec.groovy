@@ -1,6 +1,7 @@
 package com.rishiqing.test.functional
 
-import com.rishiqing.test.functional.ConfigUtil
+import com.rishiqing.demo.util.http.RsqRestResponse
+import com.rishiqing.demo.util.http.RsqRestUtil
 import geb.spock.GebSpec
 import spock.lang.Shared
 
@@ -18,5 +19,25 @@ class BaseApiGebSpec extends GebSpec {
 
 //        RsqRestUtil.config([proxy: ['127.0.0.1': 5555]])
 
+    }
+
+    RsqRestResponse login(Map userParams){
+        String account = userParams.username ?: userParams.phone
+        Map params = [
+                '_spring_security_remember_me': true,
+                'j_password': userParams.password,
+                'j_username': account
+        ]
+        RsqRestUtil.post("${baseUrl}${path}j_spring_security_check"){
+            header 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8'
+            header 'X-Requested-With', 'XMLHttpRequest'
+            fields params
+        }
+    }
+
+    RsqRestResponse logout(){
+        RsqRestUtil.get("${baseUrl}${path}logout/index"){
+            header 'X-Requested-With', 'XMLHttpRequest'
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.rishiqing.test.functional.web.util
+package com.rishiqing.test.functional.util
 
 import com.rishiqing.test.functional.ConfigUtil
 import sun.security.krb5.Config
@@ -143,6 +143,31 @@ where `id` in
     ) tmp
 );
 """]
+    }
+    /**
+     * 使用正则表达式匹配
+     * @param userMap
+     * @return
+     */
+    static String genCleanMultiUserUsers(Map userMap){
+        Date now = new Date()
+        String domain = userMap.domainRegexp
+        if(!domain){
+            return null
+        }
+        return """\
+update `user` u set u.username = CONCAT(u.username,'.test${now.getTime()}.test'), u.phone_number = NULL
+where `id` in
+(
+  select uid as 'id' from
+    (
+      select i_u.id as uid from `user` i_u
+      where i_u.username REGEXP '${domain}' or
+      i_u.username REGEXP '^1381000[0-9]{4}@rishiqing.com\$'
+      order by i_u.id desc limit 10
+    ) tmp
+);
+"""
     }
 
 
