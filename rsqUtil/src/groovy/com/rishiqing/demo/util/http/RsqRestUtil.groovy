@@ -82,7 +82,6 @@ class RsqRestUtil {
         handleCookie(delegateRequest)
 
         HttpResponse<String> response = unirestReq.asString()
-        println response.body
 
         new RsqRestResponse(response)
     }
