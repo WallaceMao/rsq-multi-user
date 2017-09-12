@@ -45,12 +45,12 @@ class RsqRestResponse {
     }
 
     Map getJsonMap(){
-        JSONElement ele = this.json
+        JSONElement ele = this.getJson()
         if(ele == null){
             return null;
         }
         def jsonSlurper = new JsonSlurper()
-        this.jsonMap = (Map)jsonSlurper.parseText(json.toString())
+        this.jsonMap = (Map)jsonSlurper.parseText(ele.toString())
 
         return this.jsonMap
     }

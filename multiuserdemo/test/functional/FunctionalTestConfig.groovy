@@ -14,7 +14,9 @@ _localPropertiesFile.withInputStream {
 
 String _emailDomain = 'rsqtest.com'
 String _emailDomainForTestTeamJoin = 'rsqtestteamjoin.com'
+String _emailDomainForTestTeamCreate = 'rsqtestteamcreate.com'
 Long _phoneBaseForTestTeamJoin = 13810000000
+Long _phoneBaseForTestTeamCreate = 13810001000
 
 global {
     testEmailDomain = _emailDomain
@@ -59,6 +61,24 @@ environments {
             ]
         }
         suite {
+            teamCreate {
+                emailDomain = _emailDomainForTestTeamCreate
+                phoneBase = _phoneBaseForTestTeamCreate
+                teamUser1 = [username: "team_user_1@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试1', password: 'qazXSW']
+                teamUser2 = [username: "team_user_2@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试2', password: 'wsxCDE']
+                teamUser3 = [username: "team_user_3@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试3', password: 'edcVFR']
+                teamUser4 = [username: "team_user_4@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试4', password: 'rfvBGT']
+                teamUser5 = [username: "team_user_5@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试5', password: 'tgbNHY']
+                teamUser6 = [username: "team_user_6@${_emailDomainForTestTeamCreate}", realName: 'createTeam自动化测试6', password: 'yhnMJU']
+                team1ForCreate = [name: '自动化测试团队teamCreate-A', phoneNumber: "${_phoneBaseForTestTeamCreate + 1}"]
+                team2ForCreate = [name: '自动化测试团队teamCreate-B', phoneNumber: "${_phoneBaseForTestTeamCreate + 2}"]
+                team3ForCreate = [name: '自动化测试团队teamCreate-C', phoneNumber: "${_phoneBaseForTestTeamCreate + 3}"]
+                team4ForCreate = [name: '自动化测试团队teamCreate-D', phoneNumber: "${_phoneBaseForTestTeamCreate + 4}"]
+                team5ForCreate = [name: '自动化测试团队teamCreate-E', phoneNumber: "${_phoneBaseForTestTeamCreate + 5}"]
+                team6ForCreate = [name: '自动化测试团队teamCreate-F', phoneNumber: "${_phoneBaseForTestTeamCreate + 6}"]
+                team7ForCreate = [name: '自动化测试团队teamCreate-G', phoneNumber: "${_phoneBaseForTestTeamCreate + 7}"]
+                team8ForCreate = [name: '自动化测试团队teamCreate-H', phoneNumber: "${_phoneBaseForTestTeamCreate + 8}"]
+            }
             //  加入团队相关的测试数据
             teamJoin {
                 emailDomain = _emailDomainForTestTeamJoin

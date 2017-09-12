@@ -34,10 +34,50 @@ class BaseApiGebSpec extends GebSpec {
             fields params
         }
     }
+    void checkLogin(RsqRestResponse resp){
+        assert resp.status == 200
+        assert resp.json.success == true
+    }
 
     RsqRestResponse logout(){
         RsqRestUtil.get("${baseUrl}${path}logout/index"){
             header 'X-Requested-With', 'XMLHttpRequest'
         }
+    }
+    void checkLogout(RsqRestResponse resp){
+        assert resp.status == 200
+    }
+
+    /**
+     * 注册用户，忽略验证
+     * @param params
+     * @return
+     */
+    RsqRestResponse register(Map registerUser){
+        Map params
+        if(registerUser.username){
+            params = [
+                    'username': registerUser.username,
+                    'password': registerUser.password,
+                    'realName': registerUser.realName,
+                    'NECaptchaValidate': 'random_test_validate_code'
+            ]
+        }else if(registerUser.phone){
+            params = [
+                    'phone': registerUser.phone,
+                    'password': registerUser.password,
+                    'realName': registerUser.realName,
+                    'valicode': 'random_validate_code'
+            ]
+        }
+        RsqRestResponse resp = RsqRestUtil.post("${baseUrl}${path}v2/register"){
+            header 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8'
+            header 'X-Requested-With', 'XMLHttpRequest'
+            fields params
+        }
+        resp
+    }
+    void checkRegister(RsqRestResponse resp){
+        assert resp.status == 200
     }
 }

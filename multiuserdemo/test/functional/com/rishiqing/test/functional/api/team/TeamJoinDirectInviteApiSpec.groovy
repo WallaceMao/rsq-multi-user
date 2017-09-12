@@ -37,27 +37,7 @@ class TeamJoinDirectInviteApiSpec extends BaseApiGebSpec {
     @Unroll
     def "register relative users #registerUser"(){
         when: '注册用户'
-        Map params
-        if(registerUser.username){
-            params = [
-                    'username': registerUser.username,
-                    'password': registerUser.password,
-                    'realName': registerUser.realName,
-                    'NECaptchaValidate': 'random_test_validate_code'
-            ]
-        }else if(registerUser.phone){
-            params = [
-                    'phone': registerUser.phone,
-                    'password': registerUser.password,
-                    'realName': registerUser.realName,
-                    'valicode': 'random_validate_code'
-            ]
-        }
-        RsqRestResponse resp = RsqRestUtil.post("${baseUrl}${path}v2/register"){
-            header 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8'
-            header 'X-Requested-With', 'XMLHttpRequest'
-            fields params
-        }
+        RsqRestResponse resp = register(registerUser)
 
         then: '验证注册结果'
         println resp.body
