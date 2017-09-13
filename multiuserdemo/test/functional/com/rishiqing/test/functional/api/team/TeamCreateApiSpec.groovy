@@ -5,8 +5,6 @@ import com.rishiqing.demo.util.http.RsqRestUtil
 import com.rishiqing.test.functional.ConfigUtil
 import com.rishiqing.test.functional.util.SqlPrepare
 import com.rishiqing.test.functional.util.SqlUtil
-import spock.lang.Ignore
-import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Stepwise
 import spock.lang.Unroll
@@ -96,9 +94,9 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         checkFetchMe(resp, [team: suiteEnv.team2ForCreate])
 
         when:"获取用户1所有团队的列表"
-        resp = fetchTeams()
+        resp = fetchUserSiblings()
         then:
-        checkFetchTeams(resp, [list: [suiteEnv.team1ForCreate, suiteEnv.team2ForCreate]])
+        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team1ForCreate, suiteEnv.team2ForCreate]])
 
         when:
         resp = logout()
@@ -158,9 +156,9 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         checkFetchMe(resp, [team: suiteEnv.team4ForCreate])
 
         when:"获取用户所有团队的列表"
-        resp = fetchTeams()
+        resp = fetchUserSiblings()
         then:
-        checkFetchTeams(resp, [list: [suiteEnv.team3ForCreate, suiteEnv.team4ForCreate]])
+        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team3ForCreate, suiteEnv.team4ForCreate]])
 
         when:
         resp = logout()
@@ -205,9 +203,9 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
 
         when: '获取用户的team列表'
         //  TODO  这个地方看需要获取team还是获取user
-        resp = fetchTeams()
+        resp = fetchUserSiblings()
         then:
-        checkFetchTeams(resp, [list: []])
+        checkFetchUserSiblings(resp, [teamList: []])
         //  ----------------
         when: '创建团队6'
         resp = createTeam(suiteEnv.teamUser4, suiteEnv.team6ForCreate)
@@ -215,9 +213,9 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         checkCreateTeam(resp)
 
         when: '获取用户的team列表'
-        resp = fetchTeams()
+        resp = fetchUserSiblings()
         then:
-        checkFetchTeams(resp, [list: [suiteEnv.team6ForCreate]])
+        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team6ForCreate]])
     }
 
     /**
@@ -301,9 +299,9 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         checkFetchMe(resp, [team: suiteEnv.team8ForCreate])
 
         when:"获取用户所有团队的列表"
-        resp = fetchTeams()
+        resp = fetchUserSiblings()
         then:
-        checkFetchTeams(resp, [list: [suiteEnv.team8ForCreate]])
+        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team8ForCreate]])
 
         when:
         resp = logout()

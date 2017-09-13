@@ -59,10 +59,15 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
             fields inviteParams
         }
     }
-    void checkDirectInvite(RsqRestResponse resp, Map expect = [:]){
+    Map checkDirectInvite(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         assert resp.json.success == true
         assert resp.json.inviteSuccess == expect.inviteSuccess ?: 1
+        Map result = [t: 0]
+        if(resp.jsonMap.inviteResult.size() != 0){
+            result.t = resp.jsonMap.inviteResult[0].t
+        }
+        result
     }
 
     /**
@@ -104,22 +109,109 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
      * 获取团队数量
      * @return
      */
-    RsqRestResponse fetchTeams(){
+    RsqRestResponse fetchUserSiblings(){
         RsqRestUtil.post("${baseUrl}${path}multiuser/fetchUserSiblings"){
             header 'X-Requested-With', 'XMLHttpRequest'
         }
     }
-    void checkFetchTeams(RsqRestResponse resp, Map expect = [:]){
+    void checkFetchUserSiblings(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         assert resp.json.errcode == 0
-        if(expect){
+        List userList = resp.jsonMap.result
+        if(expect.teamList){
             //  只读取有团队的user
-            List userList = resp.jsonMap.result
             List teamList = userList.grep { it.team != null }
-            assert teamList.size() == expect.list.size()
-            expect.list.eachWithIndex {team, index ->
+            assert teamList.size() == expect.teamList.size()
+            expect.teamList.eachWithIndex {team, index ->
                 assert teamList[index].team.name == team.name
             }
         }
+        if(expect.noTeamList){
+            //  检查没有团队的用户
+            List noTeamList = userList.grep { it.team == null }
+            assert noTeamList.size() == expect.noTeamList.size()
+            expect.noTeamList.eachWithIndex {user, index ->
+            }
+        }
+    }
+
+    /**
+     * teamMember是团队中的人，邀请别人加入团队
+     * inviteParams是被邀请人的参数
+     * @param teamMember
+     * @param inviteParams
+     * @return
+     */
+    RsqRestResponse loginAndDirectInviteAndJoinInTeam(Map teamMember, Map inviteParams){
+        //  邀请人登录
+        RsqRestResponse resp = login(teamMember)
+        checkLogin(resp)
+        //  邀请人邀请别人
+        resp = directInvite(inviteParams)
+        Map result = checkDirectInvite(resp)
+        //  保存邀请token
+        inviteParams.t = result.t
+        //  邀请人退出
+        resp = logout()
+        checkLogout(resp)
+
+        //  受邀请人登录
+        resp = login(inviteParams)
+        checkLogin(resp)
+        //  受邀请人接受邀请加入团队
+        resp = joinInTeam(inviteParams)
+        checkJoinInTeam(resp)
+        //  受邀请人退出
+        RsqRestResponse logoutResp = logout()
+        checkLogout(logoutResp)
+
+        resp
+    }
+
+    RsqRestResponse loginAndFetchUserSiblings(Map loginUser){
+        //  登录
+        RsqRestResponse resp = login(loginUser)
+        checkLogin(resp)
+        //  获取兄弟用户数
+        resp = fetchUserSiblings()
+        //  注销
+        def logoutResp = logout()
+        checkLogout(logoutResp)
+
+        resp
+    }
+
+    RsqRestResponse loginAndCreateTeam(Map loginUser, Map teamParams){
+        //  登录
+        RsqRestResponse resp = login(loginUser)
+        checkLogin(resp)
+        //  创建团队
+        resp = createTeam(loginUser, teamParams)
+        //  注销
+        def logoutResp = logout()
+        checkLogout(logoutResp)
+
+        resp
+    }
+
+    RsqRestResponse loginAndQuitTeam(Map loginUser){
+        //  登录
+        RsqRestResponse resp = login(loginUser)
+        checkLogin(resp)
+        //  获取兄弟用户数
+        resp = quitTeam()
+        //  注销
+        def logoutResp = logout()
+        checkLogout(logoutResp)
+
+        resp
+    }
+
+    /**
+     * 用来做通用的http 200 返回检查
+     * @param resp
+     */
+    void checkSuccess(RsqRestResponse resp){
+        assert resp.status == 200
     }
 }
