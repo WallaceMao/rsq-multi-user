@@ -136,6 +136,14 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
     }
 
     /**
+     * 用来做通用的http 200 返回检查
+     * @param resp
+     */
+    void checkSuccess(RsqRestResponse resp){
+        assert resp.status == 200
+    }
+
+    /**
      * teamMember是团队中的人，邀请别人加入团队
      * inviteParams是被邀请人的参数
      * @param teamMember
@@ -205,13 +213,5 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
         checkLogout(logoutResp)
 
         resp
-    }
-
-    /**
-     * 用来做通用的http 200 返回检查
-     * @param resp
-     */
-    void checkSuccess(RsqRestResponse resp){
-        assert resp.status == 200
     }
 }

@@ -39,6 +39,12 @@ class BaseApiGebSpec extends GebSpec {
         assert resp.json.success == true
     }
 
+    RsqRestResponse loginAndCheck(Map userParams){
+        RsqRestResponse resp = login(userParams)
+        checkLogin(resp)
+        resp
+    }
+
     RsqRestResponse logout(){
         RsqRestUtil.get("${baseUrl}${path}logout/index"){
             header 'X-Requested-With', 'XMLHttpRequest'
@@ -46,6 +52,11 @@ class BaseApiGebSpec extends GebSpec {
     }
     void checkLogout(RsqRestResponse resp){
         assert resp.status == 200
+    }
+    RsqRestResponse logoutAndCheck(){
+        RsqRestResponse resp = logout()
+        checkLogout(resp)
+        resp
     }
 
     /**

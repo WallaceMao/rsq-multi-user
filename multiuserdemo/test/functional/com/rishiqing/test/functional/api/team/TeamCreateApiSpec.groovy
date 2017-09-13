@@ -5,6 +5,7 @@ import com.rishiqing.demo.util.http.RsqRestUtil
 import com.rishiqing.test.functional.ConfigUtil
 import com.rishiqing.test.functional.util.SqlPrepare
 import com.rishiqing.test.functional.util.SqlUtil
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Stepwise
 import spock.lang.Unroll
@@ -51,39 +52,31 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
     }
 
     /**
+     * stepwise时暂停3000ms等待用户注册成功
+     * 新注册的用户会有生成默认的日程、计划、笔记，这里加1秒的等待时间，保证生成完成
+     */
+    def "sleep for user register"(){
+        when:
+        Thread.sleep(3000)
+        then:
+        true
+    }
+
+    /**
      * user1：创建team1——》创建成功并携带文集
      * user1：创建team2——》创建成功，user1有两家公司
      */
     def "user1 create team1 and team2"(){
-        when: '用户1登录'
-        //  新注册的用户会有生成默认的日程、计划、笔记，这里加1秒的等待时间，保证生成完成
-        Thread.sleep(3000)
-        RsqRestResponse resp = login(suiteEnv.teamUser1)
-        then: '验证登录'
-        checkLogin(resp)
+        given:
+        RsqRestResponse resp
 
         when: '用户1创建团队1'
-        resp = createTeam(suiteEnv.teamUser1, suiteEnv.team1ForCreate)
+        resp = loginAndCreateTeam(suiteEnv.teamUser1, suiteEnv.team1ForCreate)
         then:
         checkCreateTeam(resp)
 
-        //  TODO
-//        when: "检查文集"
-//        then: ""
-
-        when:
-        resp = logout()
-        then:
-        checkLogout(resp)
-
-        //  ---------------------------------------------
-
-        when: "用户1重新登录"
-        resp = login(suiteEnv.teamUser1)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '用户1创建团队2'
+        when: 'user1创建team2'
+        resp = loginAndCheck(suiteEnv.teamUser1)
         resp = createTeam(suiteEnv.teamUser1, suiteEnv.team2ForCreate)
         then:
         checkCreateTeam(resp)
@@ -97,11 +90,7 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         resp = fetchUserSiblings()
         then:
         checkFetchUserSiblings(resp, [teamList: [suiteEnv.team1ForCreate, suiteEnv.team2ForCreate]])
-
-        when:
-        resp = logout()
-        then:
-        checkLogout(resp)
+        logoutAndCheck()
     }
 
     /**
@@ -110,42 +99,21 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
      * user3：创建team4——》创建成功并携带文集，user3有两家公司
      */
     def "user2 create team3 and invite user3 --> user3 join team3 --> user3 create team4"(){
-        when: 'user2 登录'
-        //  新注册的用户会有生成默认的日程、计划、笔记，这里加1秒的等待时间，保证生成完成
-        Thread.sleep(3000)
-        RsqRestResponse resp = login(suiteEnv.teamUser2)
-        then: '验证登录'
-        checkLogin(resp)
+        given:
+        RsqRestResponse resp
 
-        when: '创建团队3'
-        resp = createTeam(suiteEnv.teamUser2, suiteEnv.team3ForCreate)
+        when: 'user2创建team3'
+        resp = loginAndCreateTeam(suiteEnv.teamUser2, suiteEnv.team3ForCreate)
         then:
         checkCreateTeam(resp)
 
-        when: '用户2邀请用户3'
-        resp = directInvite(suiteEnv.teamUser3)
-        then:
-        checkDirectInvite(resp)
-
-        when: '保存邀请用户3时的token，用于用户3加入团队3；用户2注销'
-        if(resp.jsonMap.inviteResult.size() != 0){
-            suiteEnv.teamUser3.t = resp.jsonMap.inviteResult[0].t
-        }
-        resp = logout()
-        then:
-        checkLogout(resp)
-        //  --------------------------------
-        when: '用户3登录'
-        resp = login(suiteEnv.teamUser3)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '用户3加入team3'
-        resp = joinInTeam(suiteEnv.teamUser3)
+        when: 'user2邀请用户3'
+        resp = loginAndDirectInviteAndJoinInTeam(suiteEnv.teamUser2, suiteEnv.teamUser3)
         then:
         checkJoinInTeam(resp)
-        //  ------------------------------
+
         when: '用户3创建团队4'
+        resp = loginAndCheck(suiteEnv.teamUser3)
         resp = createTeam(suiteEnv.teamUser3, suiteEnv.team4ForCreate)
         then:
         checkCreateTeam(resp)
@@ -159,11 +127,7 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         resp = fetchUserSiblings()
         then:
         checkFetchUserSiblings(resp, [teamList: [suiteEnv.team3ForCreate, suiteEnv.team4ForCreate]])
-
-        when:
-        resp = logout()
-        then:
-        checkLogout(resp)
+        logoutAndCheck()
     }
 
     /**
@@ -175,47 +139,31 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         given:
         RsqRestResponse resp
 
-        when: 'user4 登录'
-        Thread.sleep(3000)
-        resp = login(suiteEnv.teamUser4)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '创建团队5'
-        resp = createTeam(suiteEnv.teamUser4, suiteEnv.team5ForCreate)
+        when: 'user4 创建team5'
+        resp = loginAndCreateTeam(suiteEnv.teamUser4, suiteEnv.team5ForCreate)
         then:
         checkCreateTeam(resp)
 
-        when: '退出'
-        resp = logout()
-        then:
-        checkLogout(resp)
-        //  ----------------
-        when: 'user4 登录'
-        resp = login(suiteEnv.teamUser4)
-        then: '验证登录'
-        checkLogin(resp)
-
         when: 'user4退出当前所在团队，即team5'
-        resp = quitTeam()
+        resp = loginAndQuitTeam(suiteEnv.teamUser4)
         then:
         checkQuitTeam(resp)
 
         when: '获取用户的team列表'
         //  TODO  这个地方看需要获取team还是获取user
-        resp = fetchUserSiblings()
+        resp = loginAndFetchUserSiblings(suiteEnv.teamUser4)
         then:
-        checkFetchUserSiblings(resp, [teamList: []])
-        //  ----------------
-        when: '创建团队6'
-        resp = createTeam(suiteEnv.teamUser4, suiteEnv.team6ForCreate)
+        checkFetchUserSiblings(resp, [teamList: [], noTeamList: [suiteEnv.teamUser4]])
+
+        when: 'user4创建团队6'
+        resp = loginAndCreateTeam(suiteEnv.teamUser4, suiteEnv.team6ForCreate)
         then:
         checkCreateTeam(resp)
 
         when: '获取用户的team列表'
-        resp = fetchUserSiblings()
+        resp = loginAndFetchUserSiblings(suiteEnv.teamUser4)
         then:
-        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team6ForCreate]])
+        checkFetchUserSiblings(resp, [teamList: [suiteEnv.team6ForCreate], noTeamList: [suiteEnv.teamUser4]])
     }
 
     /**
@@ -228,67 +176,23 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         given:
         RsqRestResponse resp
 
-        when: 'user5 登录'
-        //  新注册的用户会有生成默认的日程、计划、笔记，这里加1秒的等待时间，保证生成完成
-        Thread.sleep(3000)
-        resp = login(suiteEnv.teamUser5)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '创建团队7'
-        resp = createTeam(suiteEnv.teamUser5, suiteEnv.team7ForCreate)
+        when: 'user5 登录创建团队7'
+        resp = loginAndCreateTeam(suiteEnv.teamUser5, suiteEnv.team7ForCreate)
         then:
         checkCreateTeam(resp)
 
         when: '用户5邀请用户6'
-        resp = directInvite(suiteEnv.teamUser6)
-        then:
-        checkDirectInvite(resp)
-
-        when: '保存邀请用户6时的token，用于用户6加入团队7；用户5注销'
-        if(resp.jsonMap.inviteResult.size() != 0){
-            suiteEnv.teamUser6.t = resp.jsonMap.inviteResult[0].t
-        }
-        resp = logout()
-        then:
-        checkLogout(resp)
-        //  --------------------------------
-        when: '用户6登录'
-        resp = login(suiteEnv.teamUser6)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '用户6加入team7'
-        resp = joinInTeam(suiteEnv.teamUser6)
+        resp = loginAndDirectInviteAndJoinInTeam(suiteEnv.teamUser5, suiteEnv.teamUser6)
         then:
         checkJoinInTeam(resp)
 
-        when: '用户6退出'
-        resp = logout()
-        then:
-        checkLogout(resp)
-        //  ------------------------------
-        when: '用户6登录'
-        resp = login(suiteEnv.teamUser6)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '用户6退出团队7'
-        resp = quitTeam()
+        when: '用户6登录退出团队7'
+        resp = loginAndQuitTeam(suiteEnv.teamUser6)
         then:
         checkQuitTeam(resp)
 
-        when: '用户6退出'
-        resp = logout()
-        then:
-        checkLogout(resp)
-        //  ----------------
         when: '用户6登录'
-        resp = login(suiteEnv.teamUser6)
-        then: '验证登录'
-        checkLogin(resp)
-
-        when: '用户6创建团队8'
+        resp = loginAndCheck(suiteEnv.teamUser6)
         resp = createTeam(suiteEnv.teamUser6, suiteEnv.team8ForCreate)
         then:
         checkCreateTeam(resp)
@@ -302,10 +206,6 @@ class TeamCreateApiSpec extends BaseTeamApiGebSpec {
         resp = fetchUserSiblings()
         then:
         checkFetchUserSiblings(resp, [teamList: [suiteEnv.team8ForCreate]])
-
-        when:
-        resp = logout()
-        then:
-        checkLogout(resp)
+        logoutAndCheck()
     }
 }
