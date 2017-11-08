@@ -42,6 +42,7 @@ class BaseApiGebSpec extends GebSpec {
     RsqRestResponse loginAndCheck(Map userParams){
         RsqRestResponse resp = login(userParams)
         checkLogin(resp)
+        userParams.id = resp.jsonMap.id
         resp
     }
 

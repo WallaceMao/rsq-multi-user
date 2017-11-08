@@ -16,9 +16,13 @@ String _emailDomain = 'rsqtest.com'
 String _emailDomainForTestTeamJoin = 'rsqtestteamjoin.com'
 String _emailDomainForTestTeamCreate = 'rsqtestteamcreate.com'
 String _emailDomainForTestTeamJoinMultiuser = 'rsqtestteamjoinmulti.com'
+String _emailDomainForTestTeamMainUser = 'rsqtestteammainuser.com'
+String _emailDomainForTestTeamSwitchUser = 'rsqtestteamswitchuser.com'
 Long _phoneBaseForTestTeamJoin = 13810000000
 Long _phoneBaseForTestTeamCreate = 13810001000
 Long _phoneBaseForTestTeamJoinMultiuser = 13810002000
+Long _phoneBaseForTestTeamMainUser = 13810003000
+Long _phoneBaseForTestTeamSwitchUser = 13810004000
 
 global {
     testEmailDomain = _emailDomain
@@ -112,6 +116,44 @@ environments {
                 team12ForCreate = [name: '自动化测试团队teamJoinMultiuser-L', phoneNumber: "${_phoneBaseForTestTeamJoinMultiuser + 12}"]
                 team13ForCreate = [name: '自动化测试团队teamJoinMultiuser-M', phoneNumber: "${_phoneBaseForTestTeamJoinMultiuser + 13}"]
                 team14ForCreate = [name: '自动化测试团队teamJoinMultiuser-N', phoneNumber: "${_phoneBaseForTestTeamJoinMultiuser + 14}"]
+            }
+            teamMainUser {
+                emailDomain = _emailDomainForTestTeamMainUser
+                phoneBase = _phoneBaseForTestTeamMainUser
+                teamUser1 = [username: "team_user_1@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试1', password: 'qazXSW']
+                teamUser2 = [username: "team_user_2@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试2', password: 'wsxCDE']
+                teamUser3 = [username: "team_user_3@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试3', password: 'edcVFR']
+                teamUser4 = [username: "team_user_4@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试4', password: 'rfvBGT']
+                teamUser5 = [username: "team_user_5@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试5', password: 'tgbNHY']
+                teamUser6 = [username: "team_user_6@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试6', password: 'yhnMJU']
+                teamUser7 = [username: "team_user_7@${_emailDomainForTestTeamMainUser}", realName: 'joinTemaMultiuser自动化测试7', password: 'yhnMJU']
+                team1ForCreate = [name: '自动化测试团队teamMainUser-A', phoneNumber: "${_phoneBaseForTestTeamMainUser + 1}"]
+                team2ForCreate = [name: '自动化测试团队teamMainUser-B', phoneNumber: "${_phoneBaseForTestTeamMainUser + 2}"]
+                team3ForCreate = [name: '自动化测试团队teamMainUser-C', phoneNumber: "${_phoneBaseForTestTeamMainUser + 3}"]
+                team4ForCreate = [name: '自动化测试团队teamMainUser-D', phoneNumber: "${_phoneBaseForTestTeamMainUser + 4}"]
+                team5ForCreate = [name: '自动化测试团队teamMainUser-E', phoneNumber: "${_phoneBaseForTestTeamMainUser + 5}"]
+                team6ForCreate = [name: '自动化测试团队teamMainUser-F', phoneNumber: "${_phoneBaseForTestTeamMainUser + 6}"]
+                team7ForCreate = [name: '自动化测试团队teamMainUser-G', phoneNumber: "${_phoneBaseForTestTeamMainUser + 7}"]
+                team8ForCreate = [name: '自动化测试团队teamMainUser-H', phoneNumber: "${_phoneBaseForTestTeamMainUser + 8}"]
+            }
+            teamSwitchUser {
+                emailDomain = _emailDomainForTestTeamSwitchUser
+                phoneBase = _phoneBaseForTestTeamSwitchUser
+                teamUser1 = [username: "team_user_1@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试1', password: 'qazXSW']
+                teamUser2 = [username: "team_user_2@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试2', password: 'wsxCDE']
+                teamUser3 = [username: "team_user_3@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试3', password: 'edcVFR']
+                teamUser4 = [username: "team_user_4@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试4', password: 'rfvBGT']
+                teamUser5 = [username: "team_user_5@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试5', password: 'tgbNHY']
+                teamUser6 = [username: "team_user_6@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试6', password: 'yhnMJU']
+                teamUser7 = [username: "team_user_7@${_emailDomainForTestTeamSwitchUser}", realName: 'joinTemaMultiuser自动化测试7', password: 'yhnMJU']
+                team1ForCreate = [name: '自动化测试团队teamSwitchUser-A', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 1}"]
+                team2ForCreate = [name: '自动化测试团队teamSwitchUser-B', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 2}"]
+                team3ForCreate = [name: '自动化测试团队teamSwitchUser-C', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 3}"]
+                team4ForCreate = [name: '自动化测试团队teamSwitchUser-D', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 4}"]
+                team5ForCreate = [name: '自动化测试团队teamSwitchUser-E', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 5}"]
+                team6ForCreate = [name: '自动化测试团队teamSwitchUser-F', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 6}"]
+                team7ForCreate = [name: '自动化测试团队teamSwitchUser-G', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 7}"]
+                team8ForCreate = [name: '自动化测试团队teamSwitchUser-H', phoneNumber: "${_phoneBaseForTestTeamSwitchUser + 8}"]
             }
             //  加入团队相关的测试数据
             teamJoin {

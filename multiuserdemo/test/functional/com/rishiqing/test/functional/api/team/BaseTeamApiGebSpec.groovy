@@ -135,6 +135,25 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
         }
     }
 
+    RsqRestResponse setMainUser(Map userMap){
+        Map params = [
+                userId: userMap.userId
+        ]
+        RsqRestUtil.post("${baseUrl}${path}multiuser/setMainUser"){
+            header 'X-Requested-With', 'XMLHttpRequest'
+            fields params
+        }
+    }
+    void checkSetMainUser(RsqRestResponse resp, Map expect = [:]){
+        println "resp----${resp.body}"
+        assert resp.status == 200
+        assert resp.json.errcode == 0
+        Map mainUser = resp.jsonMap.result
+        if(expect){
+            expect.userId == mainUser.id
+        }
+    }
+
     /**
      * 用来做通用的http 200 返回检查
      * @param resp
@@ -208,6 +227,19 @@ class BaseTeamApiGebSpec extends BaseApiGebSpec {
         checkLogin(resp)
         //  获取兄弟用户数
         resp = quitTeam()
+        //  注销
+        def logoutResp = logout()
+        checkLogout(logoutResp)
+
+        resp
+    }
+
+    RsqRestResponse loginAndSetMainUser(Map loginUser, Map userMap){
+        //  登录
+        RsqRestResponse resp = login(loginUser)
+        checkLogin(resp)
+        //  获取兄弟用户数
+        resp = setMainUser(userMap)
         //  注销
         def logoutResp = logout()
         checkLogout(logoutResp)
