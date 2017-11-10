@@ -183,7 +183,7 @@ environments {
                 //  手机号注册的通过链接加入团队的已经注册的用户
                 userWithPhoneForJoinLinkRegistered = [phone: "${_phoneBaseForTestTeamJoin + 5}", realName: 'webDriver自动化测试10', password: 'vfrEDC']
                 //  测试团队
-                teamForJoin = [name: '自动化测试团队teamJoin-A']
+                teamForJoin = [name: '自动化测试团队teamJoin-A', phoneNumber: '13810360752']
             }
             multiuser {
                 //
@@ -198,9 +198,9 @@ environments {
                 //  尚未注册的用户，直接通过邮箱邀请
                 userForInviteNotRegistered = [username: "team_user_d@${_emailDomain}", realName: 'webDriver自动化测试5', password: 'ujm<KI']
                 //  由userForTeamCreate创建的核心测试团队
-                teamForCreate = [name: "自动化测试团队A"]
+                teamForCreate = [name: "自动化测试团队A", phoneNumber: '13810360752']
                 //  userForInviteTeam所创建的团队
-                teamForAnother = [name: "自动化测试团队C"]
+                teamForAnother = [name: "自动化测试团队C", phoneNumber: '13810360752']
             }
         }
     }

@@ -159,11 +159,11 @@ log4j = {
         development {
             error additivity: true,  //  additivity为false，表示对于该配置中的相关类的logger不再调用root logger打印日志
                     consoleAppender:
-                            ['org.codehaus.groovy.grails.web.servlet',        // controllers
-                             'org.codehaus.groovy.grails.web.pages',          // GSP
-                             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-                             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-                             'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+                            ['org.codehaus.groovy.grails.browser.servlet',        // controllers
+                             'org.codehaus.groovy.grails.browser.pages',          // GSP
+                             'org.codehaus.groovy.grails.browser.sitemesh',       // layouts
+                             'org.codehaus.groovy.grails.browser.mapping.filter', // URL mapping
+                             'org.codehaus.groovy.grails.browser.mapping',        // URL mapping
                              'org.codehaus.groovy.grails.commons',            // core / classloading
                              'org.codehaus.groovy.grails.plugins',            // plugins
                              'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
@@ -180,11 +180,11 @@ log4j = {
         production {
             error  additivity: false,  //  additivity为false，表示对于该配置中的相关类的logger不再调用root logger打印日志
                     dailyAppender:
-                            ['org.codehaus.groovy.grails.web.servlet',        // controllers
-                             'org.codehaus.groovy.grails.web.pages',          // GSP
-                             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-                             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-                             'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+                            ['org.codehaus.groovy.grails.browser.servlet',        // controllers
+                             'org.codehaus.groovy.grails.browser.pages',          // GSP
+                             'org.codehaus.groovy.grails.browser.sitemesh',       // layouts
+                             'org.codehaus.groovy.grails.browser.mapping.filter', // URL mapping
+                             'org.codehaus.groovy.grails.browser.mapping',        // URL mapping
                              'org.codehaus.groovy.grails.commons',            // core / classloading
                              'org.codehaus.groovy.grails.plugins',            // plugins
                              'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
