@@ -131,6 +131,24 @@ class AccountApi {
         }
     }
 
+    public static final RsqRestResponse switchUser(Map targetUserParams){
+        Map params
+        if(targetUserParams.id){
+            params = [
+                    id: targetUserParams.id
+            ]
+        }else if(targetUserParams.username){
+            params = [
+                    username: targetUserParams.username
+            ]
+        }
+
+        RsqRestUtil.post("${baseUrl}${path}multiuser/switchUser"){
+            header 'X-Requested-With', 'XMLHttpRequest'
+            fields params
+        }
+    }
+
     /**
      * 获取团队数量
      * @return

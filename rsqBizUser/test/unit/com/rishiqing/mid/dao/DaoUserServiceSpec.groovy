@@ -6,6 +6,7 @@ import com.rishiqing.domain.user.Team
 import com.rishiqing.domain.user.User
 import com.rishiqing.domain.user.UserJoinTeamHistory
 import com.rishiqing.mid.UsefulSpecification
+import com.rishiqing.model.dao.UserDaoService
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.runtime.FreshRuntime
@@ -20,7 +21,7 @@ import spock.lang.Unroll
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @FreshRuntime
-@TestFor(DaoUserService)
+@TestFor(UserDaoService)
 @Mock([User,CommonUser, SuperUser, Team, UserJoinTeamHistory])
 class DaoUserServiceSpec extends UsefulSpecification {
 

@@ -2,6 +2,7 @@ package com.rishiqing.test.functional.rest.team
 
 import com.rishiqing.demo.util.http.RsqRestResponse
 import com.rishiqing.demo.util.http.RsqRestUtil
+import com.rishiqing.test.functional.BaseApi
 import com.rishiqing.test.functional.ConfigUtil
 import com.rishiqing.test.functional.api.AccountApi
 import com.rishiqing.test.functional.api.TeamApi
@@ -20,7 +21,7 @@ import spock.lang.Unroll
  * Created by  on 2017/9/6.Wallace
  */
 @Stepwise
-class TeamMainUserApiSpec extends BaseTeamApi {
+class TeamMainUserApiSpec extends BaseApi {
     @Shared def suiteEnv = ConfigUtil.config.suite.teamMainUser
 
     def setupSpec(){
@@ -81,7 +82,6 @@ class TeamMainUserApiSpec extends BaseTeamApi {
     @Unroll
     def "#envTeamCreator 创建 #envTeam"(){
         when: '用户登录'
-        //  新注册的用户会有生成默认的日程、计划、笔记，这里加1秒的等待时间，保证生成完成
         RsqRestResponse resp = TeamApi.loginAndCreateTeam(envTeamCreator as Map, envTeam as Map)
         then: '验证登录'
         TeamApi.checkCreateTeam(resp)

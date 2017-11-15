@@ -19,7 +19,7 @@ class CommonUser extends User{
     String openTo = "all"
     /**
      * 帐号由哪个端创建 <br>
-     *     <p> 帐号可以由 android phone\iphone\web\android pad\ipad 端创建 </p>
+     *     <p> 帐号可以由 android phone\iphone\browser\android pad\ipad 端创建 </p>
      */
     String createdByClient = "web"
     /** 用户所属的公司 */

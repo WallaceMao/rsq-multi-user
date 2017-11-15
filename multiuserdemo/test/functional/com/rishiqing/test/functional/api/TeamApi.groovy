@@ -5,8 +5,10 @@ import com.rishiqing.demo.util.http.RsqRestUtil
 import com.rishiqing.test.functional.ConfigUtil
 
 class TeamApi {
-    private static String baseUrl = ConfigUtil.config.baseUrl
-    private static String path = ConfigUtil.config.path
+    private static final String baseUrl = ConfigUtil.config.baseUrl
+    private static final String path = ConfigUtil.config.path
+
+    private TeamApi(){}
 
     /**
      * 创建团队
@@ -14,7 +16,7 @@ class TeamApi {
      * @param teamParams
      * @return
      */
-    public static RsqRestResponse createTeam(Map userParams, Map teamParams){
+    public static final RsqRestResponse createTeam(Map userParams, Map teamParams){
         Map params = [
                 name: teamParams.name,
                 contacts: userParams.realName,
@@ -26,13 +28,13 @@ class TeamApi {
             fields params
         }
     }
-    public static void checkCreateTeam(RsqRestResponse resp){
+    public static final void checkCreateTeam(RsqRestResponse resp){
         assert resp.status == 200
         assert resp.json.success == true
         assert resp.json.team != null
     }
 
-    public static RsqRestResponse quitTeam(){
+    public static final RsqRestResponse quitTeam(){
         RsqRestUtil.post("${baseUrl}${path}team/quit"){
             header 'X-Requested-With', 'XMLHttpRequest'
         }
@@ -46,7 +48,7 @@ class TeamApi {
      * @param inviteUserParam
      * @return
      */
-    public static RsqRestResponse directInvite(Map inviteUserParam){
+    public static final RsqRestResponse directInvite(Map inviteUserParam){
         Map inviteParams = [
                 account: inviteUserParam.username?:inviteUserParam.phone,
                 deptId: 'unDept',
@@ -59,7 +61,7 @@ class TeamApi {
             fields inviteParams
         }
     }
-    public static Map checkDirectInvite(RsqRestResponse resp, Map expect = [:]){
+    public static final Map checkDirectInvite(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         assert resp.json.success == true
         assert resp.json.inviteSuccess == expect.inviteSuccess ?: 1
@@ -75,7 +77,7 @@ class TeamApi {
      * @param inviteUserParam
      * @return
      */
-    public static RsqRestResponse batchInvite(List inviteUserList){
+    public static final RsqRestResponse batchInvite(List inviteUserList){
         List accounts = []
         inviteUserList.each {it ->
             accounts.add(it.username?:it.phone)
@@ -89,7 +91,7 @@ class TeamApi {
             fields inviteParams
         }
     }
-    public static List checkBatchInvite(RsqRestResponse resp, Map expect = [:]){
+    public static final List checkBatchInvite(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         assert resp.json.success == true
         assert resp.json.inviteSuccess == expect.inviteSuccess
@@ -104,7 +106,7 @@ class TeamApi {
      * 链接邀请
      * @return
      */
-    public static RsqRestResponse linkInvite(){
+    public static final RsqRestResponse linkInvite(){
         Map inviteParams = [
                 deptId: 'unDept'
         ]
@@ -125,7 +127,7 @@ class TeamApi {
      * @param invitedUserPam
      * @return
      */
-    public static RsqRestResponse joinInTeam(Map invitedUserPam){
+    public static final RsqRestResponse joinInTeam(Map invitedUserPam){
         Map params = [
                 t: invitedUserPam.t
         ]
@@ -135,7 +137,7 @@ class TeamApi {
             fields params
         }
     }
-    public static void checkJoinInTeam(RsqRestResponse resp, Map expect = [:]){
+    public static final void checkJoinInTeam(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         if(expect.team){
             assert resp.json.team != null
@@ -148,7 +150,7 @@ class TeamApi {
      * @param invitedUserPam
      * @return
      */
-    public static RsqRestResponse joinInTeamOutside(Map teamParams, Map invitedUserParams){
+    public static final RsqRestResponse joinInTeamOutside(Map teamParams, Map invitedUserParams){
         Map params
         if(invitedUserParams.username){
             params = [
@@ -169,7 +171,21 @@ class TeamApi {
             fields params
         }
     }
-    public static void checkJoinInTeamOutside(RsqRestResponse resp){
+    public static final void checkJoinInTeamOutside(RsqRestResponse resp){
+        assert resp.status == 200
+    }
+
+    public static final RsqRestResponse deleteTeam(Map teamUserMap){
+        Map params = [
+                password: teamUserMap.password
+        ]
+        RsqRestUtil.post("${baseUrl}${path}team/deleteTeam"){
+            header 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8'
+            header 'X-Requested-With', 'XMLHttpRequest'
+            fields params
+        }
+    }
+    public static final void checkDeleteTeam(RsqRestResponse resp){
         assert resp.status == 200
     }
 
@@ -177,7 +193,7 @@ class TeamApi {
      * 用来做通用的http 200 返回检查
      * @param resp
      */
-    public static void checkSuccess(RsqRestResponse resp){
+    public static final void checkSuccess(RsqRestResponse resp){
         assert resp.status == 200
     }
 
@@ -188,7 +204,7 @@ class TeamApi {
      * @param inviteParams
      * @return
      */
-    public static RsqRestResponse loginAndDirectInviteAndJoinInTeam(Map team, Map teamMember, Map inviteParams){
+    public static final RsqRestResponse loginAndDirectInviteAndJoinInTeam(Map team, Map teamMember, Map inviteParams){
         //  邀请人登录
         RsqRestResponse resp = AccountApi.login(teamMember)
         AccountApi.checkLogin(resp)
@@ -214,7 +230,7 @@ class TeamApi {
         resp
     }
 
-    public static RsqRestResponse loginAndBatchInviteAndJoinInTeam(Map team, Map teamMember, List invitedMembers){
+    public static final RsqRestResponse loginAndBatchInviteAndJoinInTeam(Map team, Map teamMember, List invitedMembers){
         //  邀请人登录
         RsqRestResponse resp = AccountApi.login(teamMember)
         AccountApi.checkLogin(resp)
@@ -243,7 +259,7 @@ class TeamApi {
         resp
     }
 
-    public static RsqRestResponse loginAndCreateTeam(Map loginUser, Map teamParams){
+    public static final RsqRestResponse loginAndCreateTeam(Map loginUser, Map teamParams){
         //  登录
         RsqRestResponse resp = AccountApi.login(loginUser)
         AccountApi.checkLogin(resp)
@@ -256,7 +272,7 @@ class TeamApi {
         resp
     }
 
-    public static RsqRestResponse loginAndQuitTeam(Map loginUser){
+    public static final RsqRestResponse loginAndQuitTeam(Map loginUser){
         //  登录
         RsqRestResponse resp = AccountApi.login(loginUser)
         AccountApi.checkLogin(resp)

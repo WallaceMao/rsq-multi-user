@@ -200,7 +200,7 @@ environments {
                 //  由userForTeamCreate创建的核心测试团队
                 teamForCreate = [name: "自动化测试团队A", phoneNumber: '13810360752']
                 //  userForInviteTeam所创建的团队
-                teamForAnother = [name: "自动化测试团队C", phoneNumber: '13810360752']
+                teamForAnother = [name: "自动化测试团队C", phoneNumber: '13810360753']
             }
         }
     }

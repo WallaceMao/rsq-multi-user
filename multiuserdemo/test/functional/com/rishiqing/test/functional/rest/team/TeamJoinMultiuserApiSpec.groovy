@@ -2,6 +2,7 @@ package com.rishiqing.test.functional.rest.team
 
 import com.rishiqing.demo.util.http.RsqRestResponse
 import com.rishiqing.demo.util.http.RsqRestUtil
+import com.rishiqing.test.functional.BaseApi
 import com.rishiqing.test.functional.ConfigUtil
 import com.rishiqing.test.functional.api.AccountApi
 import com.rishiqing.test.functional.api.TeamApi
@@ -16,7 +17,7 @@ import spock.lang.Unroll
  * Created by  on 2017/9/12.Wallace
  */
 @Stepwise
-class TeamJoinMultiuserApiSpec extends BaseTeamApi {
+class TeamJoinMultiuserApiSpec extends BaseApi {
     @Shared def suiteEnv = ConfigUtil.config.suite.teamJoinMultiUser
 
     def setupSpec(){
@@ -27,7 +28,6 @@ class TeamJoinMultiuserApiSpec extends BaseTeamApi {
             String str = SqlPrepare.genCleanMultiUserUsers([
                     domainRegexp: "@${suiteEnv.emailDomain}\$"
             ])
-            println "clean database: ${str}"
             SqlUtil.execute(str)
         }
     }
