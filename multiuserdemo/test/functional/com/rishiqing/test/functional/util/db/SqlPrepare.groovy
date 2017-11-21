@@ -27,7 +27,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.username like '${username}'
-      order by i_u.id desc limit 5
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -47,7 +47,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.phone_number like '${phoneNumber}'
-      order by i_u.id desc limit 5
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -67,7 +67,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.real_name like '${realName}' and i_u.qq_open_id is not null
-      order by i_u.id desc limit 5
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -87,7 +87,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.real_name like '${realName}' and i_u.wx_open_id is not null
-      order by i_u.id desc limit 5
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -107,7 +107,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.real_name like '${realName}' and i_u.sina_open_id is not null
-      order by i_u.id desc limit 5
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -126,7 +126,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.real_name like '${realName}' and i_u.from_client like 'dingtalk'
-      order by i_u.id desc limit 1
+      order by i_u.id desc limit 20
     ) tmp
 );
 """, """\
@@ -139,7 +139,7 @@ where `id` in
     (
       select i_u.id as uid from `user` i_u
       where i_u.real_name like '${realName}' and i_u.from_client like 'dingtalk'
-      order by i_u.id desc limit 1
+      order by i_u.id desc limit 20
     ) tmp
 );
 """]
@@ -164,7 +164,7 @@ where `id` in
       select i_u.id as uid from `user` i_u
       where i_u.username REGEXP '${domain}' or
       i_u.username REGEXP '^1381000[0-9]{4}@rishiqing.com\$'
-      order by i_u.id desc limit 10
+      order by i_u.id desc limit 20
     ) tmp
 );
 """
@@ -172,20 +172,24 @@ where `id` in
 
 
     public static void main(String[] args) {
-        System.setProperty("geb.env", "rsqbeta")
-        println "# --------清理邮箱注册用户--------"
-        println genCleanEmailUsers(ConfigUtil.config.users.emailUsers[0])
-        println "# --------清理手机号用户--------"
-        println genCleanPhoneUsers(ConfigUtil.config.users.phoneUsers[0])
-        println "# --------清理QQ用户--------"
-        println genCleanQqUsers(ConfigUtil.config.users.qqUsers[0])
-        println "# --------清理微信用户--------"
-        println genCleanWeixinUsers(ConfigUtil.config.users.weixinUsers[0])
-        println "# --------清理微博用户--------"
-        println genCleanWeiboUsers(ConfigUtil.config.users.weiboUsers[0])
-        println "# --------清理钉钉用户--------"
-        println genCleanDingUsers(ConfigUtil.config.users.dingUsers[0])[0]
-        println genCleanDingUsers(ConfigUtil.config.users.dingUsers[0])[1]
+//        System.setProperty("geb.env", "rsqbeta")
+//        println "# --------清理邮箱注册用户--------"
+//        println genCleanEmailUsers(ConfigUtil.config.users.emailUsers[0])
+//        println "# --------清理手机号用户--------"
+//        println genCleanPhoneUsers(ConfigUtil.config.users.phoneUsers[0])
+//        println "# --------清理QQ用户--------"
+//        println genCleanQqUsers(ConfigUtil.config.users.qqUsers[0])
+//        println "# --------清理微信用户--------"
+//        println genCleanWeixinUsers(ConfigUtil.config.users.weixinUsers[0])
+//        println "# --------清理微博用户--------"
+//        println genCleanWeiboUsers(ConfigUtil.config.users.weiboUsers[0])
+//        println "# --------清理钉钉用户--------"
+//        println genCleanDingUsers(ConfigUtil.config.users.dingUsers[0])[0]
+//        println genCleanDingUsers(ConfigUtil.config.users.dingUsers[0])[1]
+        println "# --------清理multi user用户-------"
+        println genCleanMultiUserUsers([
+                domainRegexp: "@rsqtestteamjoinmulti.com\$"
+        ])
         println "# ----------------"
     }
 }

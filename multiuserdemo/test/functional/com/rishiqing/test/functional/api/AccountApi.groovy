@@ -181,7 +181,7 @@ class AccountApi {
 
     public static RsqRestResponse setMainUser(Map userMap){
         Map params = [
-                userId: userMap.userId
+                userId: userMap.id
         ]
         RsqRestUtil.post("${baseUrl}${path}multiuser/setMainUser"){
             header 'X-Requested-With', 'XMLHttpRequest'
@@ -189,7 +189,20 @@ class AccountApi {
         }
     }
     public static void checkSetMainUser(RsqRestResponse resp, Map expect = [:]){
-        println "resp----${resp.body}"
+        assert resp.status == 200
+        assert resp.json.errcode == 0
+        Map mainUser = resp.jsonMap.result
+        if(expect){
+            expect.userId == mainUser.id
+        }
+    }
+
+    public static RsqRestResponse getMainUser(){
+        RsqRestUtil.get("${baseUrl}${path}multiuser/getMainUser"){
+            header 'X-Requested-With', 'XMLHttpRequest'
+        }
+    }
+    public static void checkGetMainUser(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         assert resp.json.errcode == 0
         Map mainUser = resp.jsonMap.result

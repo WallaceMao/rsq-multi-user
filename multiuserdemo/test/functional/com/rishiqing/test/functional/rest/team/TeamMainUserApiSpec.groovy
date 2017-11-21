@@ -32,7 +32,6 @@ class TeamMainUserApiSpec extends BaseApi {
             String str = SqlPrepare.genCleanMultiUserUsers([
                     domainRegexp: "@${suiteEnv.emailDomain}\$"
             ])
-            println "clean database: ${str}"
             SqlUtil.execute(str)
         }
     }
@@ -53,10 +52,10 @@ class TeamMainUserApiSpec extends BaseApi {
         registerUser << [
                 suiteEnv.teamUser1,
                 suiteEnv.teamUser2,
-//                suiteEnv.teamUser3,
-//                suiteEnv.teamUser4,
-//                suiteEnv.teamUser5,
-//                suiteEnv.teamUser6,
+                suiteEnv.teamUser3,
+                suiteEnv.teamUser4,
+                suiteEnv.teamUser5,
+                suiteEnv.teamUser6,
 //                suiteEnv.teamUser7
         ]
     }
@@ -89,19 +88,19 @@ class TeamMainUserApiSpec extends BaseApi {
         where:
         envTeamCreator << [
                 suiteEnv.teamUser2,
-//                suiteEnv.teamUser3,
-//                suiteEnv.teamUser3,
-//                suiteEnv.teamUser5,
-//                suiteEnv.teamUser6,
+                suiteEnv.teamUser3,
+                suiteEnv.teamUser3,
+                suiteEnv.teamUser5,
+                suiteEnv.teamUser6,
 //                suiteEnv.teamUser7,
 //                suiteEnv.teamUser8
         ]
         envTeam << [
                 suiteEnv.team2ForCreate,
-//                suiteEnv.team3ForCreate,
-//                suiteEnv.team4ForCreate,
-//                suiteEnv.team5ForCreate,
-//                suiteEnv.team6ForCreate,
+                suiteEnv.team3ForCreate,
+                suiteEnv.team4ForCreate,
+                suiteEnv.team5ForCreate,
+                suiteEnv.team6ForCreate,
 //                suiteEnv.team7ForCreate,
 //                suiteEnv.team8ForCreate
         ]
@@ -110,35 +109,46 @@ class TeamMainUserApiSpec extends BaseApi {
     /**
      * user-c1：个人用户，只能设置当前用户为主用户
      */
-    def "user1 is not team user and main user is user1"(){
+    @Ignore
+    def "user1 不是团队用户，主用户就是 user1"(){
         given:
         RsqRestResponse resp
 
         when:
         resp = AccountApi.loginAndCheck(suiteEnv.teamUser1 as Map)
         long userId = suiteEnv.teamUser1.id
-        println "----id----${userId}"
-        resp = AccountApi.loginAndSetMainUser(suiteEnv.teamUser1 as Map, [userId: userId])
-
+        resp = AccountApi.setMainUser(suiteEnv.teamUser1 as Map)
         then:
         AccountApi.checkSetMainUser(resp, [userId: userId])
+
+        when:
+        resp = AccountApi.getMainUser()
+
+        then:
+        AccountApi.checkGetMainUser(resp, [userId: userId])
     }
 
     /**
      * user-c2：创建team-c2，只能设置当前用户为主用户
      */
-    def "user2 create team2 -> main user can only set to user2"(){
+    @Ignore
+    def "user2 创建 team2 -> 主用户就是 user2"(){
         given:
         RsqRestResponse resp
 
         when:
         resp = AccountApi.loginAndCheck(suiteEnv.teamUser2 as Map)
         long userId = suiteEnv.teamUser2.id
-        println "----id----${userId}"
-        resp = AccountApi.loginAndSetMainUser(suiteEnv.teamUser2 as Map, [userId: userId])
+        resp = AccountApi.setMainUser(suiteEnv.teamUser2 as Map)
 
         then:
         AccountApi.checkSetMainUser(resp, [userId: userId])
+
+        when:
+        resp = AccountApi.getMainUser()
+
+        then:
+        AccountApi.checkGetMainUser(resp, [userId: userId])
     }
 
     /**
@@ -148,8 +158,48 @@ class TeamMainUserApiSpec extends BaseApi {
      * user-c3：设置team-c4为主team——》team-c4相关的user设置为主用户
      * user-c3登录默认进入team-c4
      */
-    @Ignore
-    def "user3 set team4 main user ->"(){}
+    def "user3 设置 team4 为主用户 ->"(){
+        given:
+        RsqRestResponse resp
+
+        when:
+        resp = AccountApi.loginAndCheck(suiteEnv.teamUser3 as Map)
+        long userId = suiteEnv.teamUser3.id
+        resp = AccountApi.getMainUser()
+
+        then:
+        AccountApi.checkGetMainUser(resp, [userId: userId])
+
+        when:
+        resp = AccountApi.fetchUserSiblings()
+        List userList = resp.jsonMap.result
+        Map anotherUser = (Map)userList.find {it ->
+            it.team.name == suiteEnv.team4ForCreate.name
+        }
+
+        then:
+        anotherUser != null
+
+        when:
+        resp = AccountApi.setMainUser(anotherUser)
+
+        then:
+        AccountApi.checkSetMainUser(resp, [userId: anotherUser.id])
+
+        when:
+        resp = AccountApi.getMainUser()
+
+        then:
+        AccountApi.checkGetMainUser(resp, [userId: anotherUser.id])
+        AccountApi.logoutAndCheck()
+
+        when:
+        resp = AccountApi.login(suiteEnv.teamUser3 as Map)
+        resp = AccountApi.fetchLoginInfo()
+
+        then:
+        resp.json.id == anotherUser.id
+    }
 
     /**
      * target：user-c5
@@ -161,7 +211,7 @@ class TeamMainUserApiSpec extends BaseApi {
      * user-c5登录默认进入team-c6
      */
     @Ignore
-    def "user6 invite user5 to team6 -> user5 set team6 main team"(){}
+    def "user6 邀请 user5 加入 team6 -> user5 设置 team6 为主用户"(){}
 
     /**
      * user-c7：创建team-c7——》创建成功

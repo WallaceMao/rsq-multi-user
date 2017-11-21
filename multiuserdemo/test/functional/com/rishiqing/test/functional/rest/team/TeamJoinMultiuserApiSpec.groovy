@@ -8,6 +8,7 @@ import com.rishiqing.test.functional.api.AccountApi
 import com.rishiqing.test.functional.api.TeamApi
 import com.rishiqing.test.functional.util.db.SqlPrepare
 import com.rishiqing.test.functional.util.db.SqlUtil
+import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Stepwise
 import spock.lang.Unroll
