@@ -74,21 +74,21 @@ class TeamCreateApiSpec extends BaseApi {
         given:
         RsqRestResponse resp
 
-        when: '用户1创建团队1'
+        when: 'user1创建team1'
         resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser1 as Map, suiteEnv.team1ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
         when: 'user1创建team2'
-        AccountApi.loginAndCheck(suiteEnv.teamUser1)
-        resp = TeamApi.createTeam(suiteEnv.teamUser1, suiteEnv.team2ForCreate)
+        AccountApi.loginAndCheck(suiteEnv.teamUser1 as Map)
+        resp = TeamApi.createTeam(suiteEnv.teamUser1 as Map, suiteEnv.team2ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
-        when: '当前用户是团队4的user'
-        resp = AccountApi.fetchMe()
+        when: '当前用户是team2的user'
+        resp = AccountApi.fetchLoginInfo()
         then:
-        AccountApi.checkFetchMe(resp, [team: suiteEnv.team2ForCreate])
+        AccountApi.checkFetchLoginInfo(resp, [team: suiteEnv.team2ForCreate])
 
         when:"获取用户1所有团队的列表"
         resp = AccountApi.fetchUserSiblings()
@@ -108,7 +108,7 @@ class TeamCreateApiSpec extends BaseApi {
         RsqRestResponse resp
 
         when: 'user2创建team3'
-        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser2, suiteEnv.team3ForCreate)
+        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser2 as Map, suiteEnv.team3ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
@@ -121,15 +121,15 @@ class TeamCreateApiSpec extends BaseApi {
         TeamApi.checkJoinInTeam(resp)
 
         when: '用户3创建团队4'
-        AccountApi.loginAndCheck(suiteEnv.teamUser3)
-        resp = TeamApi.createTeam(suiteEnv.teamUser3, suiteEnv.team4ForCreate)
+        AccountApi.loginAndCheck(suiteEnv.teamUser3 as Map)
+        resp = TeamApi.createTeam(suiteEnv.teamUser3 as Map, suiteEnv.team4ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
         when: '当前用户是团队4的user'
-        resp = AccountApi.fetchMe()
+        resp = AccountApi.fetchLoginInfo()
         then:
-        AccountApi.checkFetchMe(resp, [team: suiteEnv.team4ForCreate])
+        AccountApi.checkFetchLoginInfo(resp, [team: suiteEnv.team4ForCreate])
 
         when:"获取用户所有团队的列表"
         resp = AccountApi.fetchUserSiblings()
@@ -149,28 +149,28 @@ class TeamCreateApiSpec extends BaseApi {
         RsqRestResponse resp
 
         when: 'user4 创建team5'
-        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser4, suiteEnv.team5ForCreate)
+        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser4 as Map, suiteEnv.team5ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
         when: 'user4退出当前所在团队，即team5'
-        resp = TeamApi.loginAndQuitTeam(suiteEnv.teamUser4)
+        resp = TeamApi.loginAndQuitTeam(suiteEnv.teamUser4 as Map)
         then:
         TeamApi.checkQuitTeam(resp)
 
         when: '获取用户的team列表'
         //  TODO  这个地方看需要获取team还是获取user
-        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser4)
+        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser4 as Map)
         then:
         AccountApi.checkFetchUserSiblings(resp, [teamList: [], noTeamList: [suiteEnv.teamUser4]])
 
         when: 'user4创建团队6'
-        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser4, suiteEnv.team6ForCreate)
+        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser4 as Map, suiteEnv.team6ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
         when: '获取用户的team列表'
-        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser4)
+        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser4 as Map)
         then:
         AccountApi.checkFetchUserSiblings(resp, [teamList: [suiteEnv.team6ForCreate], noTeamList: [suiteEnv.teamUser4]])
     }
@@ -187,7 +187,7 @@ class TeamCreateApiSpec extends BaseApi {
         RsqRestResponse resp
 
         when: 'user5 登录创建团队7'
-        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser5, suiteEnv.team7ForCreate)
+        resp = TeamApi.loginAndCreateTeam(suiteEnv.teamUser5 as Map, suiteEnv.team7ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
@@ -200,20 +200,20 @@ class TeamCreateApiSpec extends BaseApi {
         TeamApi.checkJoinInTeam(resp)
 
         when: '用户6登录退出团队7'
-        resp = TeamApi.loginAndQuitTeam(suiteEnv.teamUser6)
+        resp = TeamApi.loginAndQuitTeam(suiteEnv.teamUser6 as Map)
         then:
         TeamApi.checkQuitTeam(resp)
 
         when: '用户6登录'
-        resp = AccountApi.loginAndCheck(suiteEnv.teamUser6)
-        resp = TeamApi.createTeam(suiteEnv.teamUser6, suiteEnv.team8ForCreate)
+        resp = AccountApi.loginAndCheck(suiteEnv.teamUser6 as Map)
+        resp = TeamApi.createTeam(suiteEnv.teamUser6 as Map, suiteEnv.team8ForCreate as Map)
         then:
         TeamApi.checkCreateTeam(resp)
 
         when: '当前用户是团队6的user'
-        resp = AccountApi.fetchMe()
+        resp = AccountApi.fetchLoginInfo()
         then:
-        AccountApi.checkFetchMe(resp, [team: suiteEnv.team8ForCreate])
+        AccountApi.checkFetchLoginInfo(resp, [team: suiteEnv.team8ForCreate])
 
         when:"获取用户所有团队的列表"
         resp = AccountApi.fetchUserSiblings()

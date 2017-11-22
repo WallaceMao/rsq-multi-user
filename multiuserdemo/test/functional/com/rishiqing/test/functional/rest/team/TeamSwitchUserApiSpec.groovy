@@ -8,6 +8,7 @@ import com.rishiqing.test.functional.api.AccountApi
 import com.rishiqing.test.functional.api.TeamApi
 import com.rishiqing.test.functional.util.db.SqlPrepare
 import com.rishiqing.test.functional.util.db.SqlUtil
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Stepwise
 import spock.lang.Unroll
@@ -91,40 +92,36 @@ class TeamSwitchUserApiSpec extends BaseApi {
         when:
         resp = AccountApi.loginAndCheck(suiteEnv.teamUser1 as Map)
         resp = AccountApi.fetchUserSiblings()
-        List userList = resp.jsonMap.result
-        switchUser1 = (Map)userList.find {it -> it.team.name == suiteEnv.team1ForCreate.name}
-        switchUser2 = (Map)userList.find {it -> it.team.name == suiteEnv.team2ForCreate.name}
+        List userList = resp.jsonMap.list
+        switchUser1 = (Map)userList.find {it -> it.teamName == suiteEnv.team1ForCreate.name}
+        switchUser2 = (Map)userList.find {it -> it.teamName == suiteEnv.team2ForCreate.name}
         resp = AccountApi.getMainUser()
-        mainUser = resp.jsonMap.result
+        mainUser = resp.jsonMap
         resp = AccountApi.fetchLoginInfo()
         loginUser = resp.jsonMap
-        println "switchUser1: ${switchUser1}"
-        println "switchUser2: ${switchUser2}"
-        println "mainUser: ${mainUser}"
-        println "loginUser: ${loginUser}"
+//        println "switchUser1: ${switchUser1}"
+//        println "switchUser2: ${switchUser2}"
+//        println "mainUser: ${mainUser}"
+//        println "loginUser: ${loginUser}"
 
         then: '当前登录用户为主用户，主用户为teamUser1，即team1ForCreate'
-        loginUser.id == mainUser.id
-        mainUser.id == switchUser1.id
+        loginUser.id == mainUser.userId
+        mainUser.userId == switchUser1.userId
 
         when:
-        resp = AccountApi.switchUser(switchUser2)
+        resp = AccountApi.switchUser([id: switchUser2.userId])
         resp = AccountApi.fetchUserSiblings()
-        userList = resp.jsonMap.result
-        switchUser1 = (Map)userList.find {it -> it.team.name == suiteEnv.team1ForCreate.name}
-        switchUser2 = (Map)userList.find {it -> it.team.name == suiteEnv.team2ForCreate.name}
+        userList = resp.jsonMap.list
+        switchUser1 = (Map)userList.find {it -> it.teamName == suiteEnv.team1ForCreate.name}
+        switchUser2 = (Map)userList.find {it -> it.teamName == suiteEnv.team2ForCreate.name}
         resp = AccountApi.getMainUser()
-        mainUser = resp.jsonMap.result
+        mainUser = resp.jsonMap
         resp = AccountApi.fetchLoginInfo()
         loginUser = resp.jsonMap
-        println "switchUser1: ${switchUser1}"
-        println "switchUser2: ${switchUser2}"
-        println "mainUser: ${mainUser}"
-        println "loginUser: ${loginUser}"
 
         then: '当前登录用户为switchUser2, 主用户不是当前登录用户，switchUser1'
-        loginUser.id != mainUser.id
-        loginUser.id == switchUser2.id
-        mainUser.id == switchUser1.id
+        loginUser.id != mainUser.userId
+        loginUser.id == switchUser2.userId
+        mainUser.userId == switchUser1.userId
     }
 }

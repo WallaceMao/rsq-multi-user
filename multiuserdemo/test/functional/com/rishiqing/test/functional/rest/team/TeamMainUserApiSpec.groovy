@@ -109,7 +109,6 @@ class TeamMainUserApiSpec extends BaseApi {
     /**
      * user-c1：个人用户，只能设置当前用户为主用户
      */
-    @Ignore
     def "user1 不是团队用户，主用户就是 user1"(){
         given:
         RsqRestResponse resp
@@ -119,7 +118,7 @@ class TeamMainUserApiSpec extends BaseApi {
         long userId = suiteEnv.teamUser1.id
         resp = AccountApi.setMainUser(suiteEnv.teamUser1 as Map)
         then:
-        AccountApi.checkSetMainUser(resp, [userId: userId])
+        AccountApi.checkSetMainUser(resp)
 
         when:
         resp = AccountApi.getMainUser()
@@ -131,7 +130,6 @@ class TeamMainUserApiSpec extends BaseApi {
     /**
      * user-c2：创建team-c2，只能设置当前用户为主用户
      */
-    @Ignore
     def "user2 创建 team2 -> 主用户就是 user2"(){
         given:
         RsqRestResponse resp
@@ -142,7 +140,7 @@ class TeamMainUserApiSpec extends BaseApi {
         resp = AccountApi.setMainUser(suiteEnv.teamUser2 as Map)
 
         then:
-        AccountApi.checkSetMainUser(resp, [userId: userId])
+        AccountApi.checkSetMainUser(resp)
 
         when:
         resp = AccountApi.getMainUser()
@@ -172,25 +170,25 @@ class TeamMainUserApiSpec extends BaseApi {
 
         when:
         resp = AccountApi.fetchUserSiblings()
-        List userList = resp.jsonMap.result
+        List userList = resp.jsonMap.list
         Map anotherUser = (Map)userList.find {it ->
-            it.team.name == suiteEnv.team4ForCreate.name
+            it.teamName == suiteEnv.team4ForCreate.name
         }
 
         then:
         anotherUser != null
 
         when:
-        resp = AccountApi.setMainUser(anotherUser)
+        resp = AccountApi.setMainUser([id: anotherUser.userId])
 
         then:
-        AccountApi.checkSetMainUser(resp, [userId: anotherUser.id])
+        AccountApi.checkSetMainUser(resp)
 
         when:
         resp = AccountApi.getMainUser()
 
         then:
-        AccountApi.checkGetMainUser(resp, [userId: anotherUser.id])
+        AccountApi.checkGetMainUser(resp, [userId: anotherUser.userId])
         AccountApi.logoutAndCheck()
 
         when:
@@ -198,7 +196,7 @@ class TeamMainUserApiSpec extends BaseApi {
         resp = AccountApi.fetchLoginInfo()
 
         then:
-        resp.json.id == anotherUser.id
+        resp.json.id == anotherUser.userId
     }
 
     /**

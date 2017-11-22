@@ -114,20 +114,10 @@ class AccountApi {
             header 'X-Requested-With', 'XMLHttpRequest'
         }
     }
-
-    /**
-     * 获取当前用户
-     * @return
-     */
-    public static RsqRestResponse fetchMe(){
-        RsqRestUtil.get("${baseUrl}${path}multiuser/fetchMe"){
-            header 'X-Requested-With', 'XMLHttpRequest'
-        }
-    }
-    public static void checkFetchMe(RsqRestResponse resp, Map expect = [:]){
+    public static void checkFetchLoginInfo(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
         if(expect){
-            assert resp.json.result.team.name == expect.team.name
+            assert resp.json.team.name == expect.team.name
         }
     }
 
@@ -135,15 +125,16 @@ class AccountApi {
         Map params
         if(targetUserParams.id){
             params = [
-                    id: targetUserParams.id
+                    userId: targetUserParams.id
             ]
         }else if(targetUserParams.username){
             params = [
                     username: targetUserParams.username
             ]
         }
-
-        RsqRestUtil.post("${baseUrl}${path}multiuser/switchUser"){
+        println "targetUserParams====${targetUserParams}"
+        println "params====${params}"
+        RsqRestUtil.postJSON("${baseUrl}${path}multiuser/switchUser"){
             header 'X-Requested-With', 'XMLHttpRequest'
             fields params
         }
@@ -154,25 +145,24 @@ class AccountApi {
      * @return
      */
     public static RsqRestResponse fetchUserSiblings(){
-        RsqRestUtil.post("${baseUrl}${path}multiuser/fetchUserSiblings"){
+        RsqRestUtil.get("${baseUrl}${path}multiuser/fetchUserSiblings"){
             header 'X-Requested-With', 'XMLHttpRequest'
         }
     }
     public static void checkFetchUserSiblings(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
-        assert resp.json.errcode == 0
-        List userList = resp.jsonMap.result
+        List userList = resp.jsonMap.list
         if(expect.teamList){
             //  只读取有团队的user
-            List teamList = userList.grep { it.team != null }
+            List teamList = userList.grep { it.teamId != null }
             assert teamList.size() == expect.teamList.size()
             expect.teamList.eachWithIndex {team, index ->
-                assert teamList[index].team.name == team.name
+                assert teamList[index].teamName == team.name
             }
         }
         if(expect.noTeamList){
             //  检查没有团队的用户
-            List noTeamList = userList.grep { it.team == null }
+            List noTeamList = userList.grep { it.teamId == null }
             assert noTeamList.size() == expect.noTeamList.size()
             expect.noTeamList.eachWithIndex {user, index ->
             }
@@ -183,18 +173,13 @@ class AccountApi {
         Map params = [
                 userId: userMap.id
         ]
-        RsqRestUtil.post("${baseUrl}${path}multiuser/setMainUser"){
+        RsqRestUtil.postJSON("${baseUrl}${path}multiuser/setMainUser"){
             header 'X-Requested-With', 'XMLHttpRequest'
             fields params
         }
     }
-    public static void checkSetMainUser(RsqRestResponse resp, Map expect = [:]){
+    public static void checkSetMainUser(RsqRestResponse resp){
         assert resp.status == 200
-        assert resp.json.errcode == 0
-        Map mainUser = resp.jsonMap.result
-        if(expect){
-            expect.userId == mainUser.id
-        }
     }
 
     public static RsqRestResponse getMainUser(){
@@ -204,10 +189,9 @@ class AccountApi {
     }
     public static void checkGetMainUser(RsqRestResponse resp, Map expect = [:]){
         assert resp.status == 200
-        assert resp.json.errcode == 0
-        Map mainUser = resp.jsonMap.result
+        Map mainUser = resp.jsonMap
         if(expect){
-            expect.userId == mainUser.id
+            expect.userId == mainUser.userId
         }
     }
 
