@@ -11,7 +11,8 @@ class ConfigUtil {
     }
     private static void init(){
         String path = "${new File('.').getAbsolutePath()}${File.separator}test${File.separator}functional${File.separator}FunctionalTestConfig.groovy"
-        String env = System.getProperty("geb.env") ?: "local"
+        println "rishiqing test stage environment(should not be NULL): ${System.getenv('RSQ_TEST_ENV')}"
+        String env = System.getenv("RSQ_TEST_ENV") ?: "local"
         config = new ConfigSlurper(env).parse(new File(path).toURI().toURL())
     }
 }

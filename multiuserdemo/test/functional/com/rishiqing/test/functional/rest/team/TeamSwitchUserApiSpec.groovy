@@ -18,6 +18,10 @@ import spock.lang.Unroll
  * Created by  on 2017/9/6.Wallace
  */
 @Stepwise
+@Ignore
+/**
+ * 不使用switchUser做切换
+ */
 class TeamSwitchUserApiSpec extends BaseApi {
     @Shared def suiteEnv = ConfigUtil.config.suite.teamSwitchUser
 

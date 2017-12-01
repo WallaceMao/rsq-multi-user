@@ -194,8 +194,8 @@ class MultiUserApiSpec extends BaseApi {
 
         when: '切换到mainTeam的superUser'
         resp = AccountApi.fetchUserSiblings()
-        List userList = resp.jsonMap.result
-        Map mainTeamUser = (Map)userList.find{ it.team != null && it.team.name == mainTeam.name }
+        List userList = resp.jsonMap.list
+        Map mainTeamUser = (Map)userList.find{ it.teamName == mainTeam.name }
         resp = AccountApi.switchUser(mainTeamUser)
         resp = AccountApi.fetchLoginInfo()
         println resp.json

@@ -50,7 +50,12 @@ class RsqRestResponse {
             return null;
         }
         def jsonSlurper = new JsonSlurper()
-        this.jsonMap = (Map)jsonSlurper.parseText(ele.toString())
+        Object obj = jsonSlurper.parseText(ele.toString())
+        if(obj instanceof List){
+            this.jsonMap = [list: (List)obj]
+        }else if(obj instanceof Map){
+            this.jsonMap = (Map)obj
+        }
 
         return this.jsonMap
     }
