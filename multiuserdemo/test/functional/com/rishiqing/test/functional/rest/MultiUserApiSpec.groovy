@@ -20,8 +20,12 @@ import spock.lang.Unroll
 /**
  * Created by  on 2017/8/30.Wallace
  */
-//@Ignore
+@Ignore
 @Stepwise
+/**
+ * 不使用该测试
+ */
+@Deprecated
 class MultiUserApiSpec extends BaseApi {
 
     @Shared def userEnv = ConfigUtil.config.suite.multiuser
@@ -196,14 +200,14 @@ class MultiUserApiSpec extends BaseApi {
         resp = AccountApi.fetchUserSiblings()
         List userList = resp.jsonMap.list
         Map mainTeamUser = (Map)userList.find{ it.teamName == mainTeam.name }
-        resp = AccountApi.switchUser(mainTeamUser)
+        resp = AccountApi.setMainUser([id: mainTeamUser.userId])
         resp = AccountApi.fetchLoginInfo()
         println resp.json
 
         then:
         resp.status == 200
         resp.json.success == true
-        resp.json.team.name == mainTeamUser.team.name
+        resp.json.team.name == mainTeamUser.teamName
 
         when: '退出团队'
         resp = TeamApi.quitTeam()

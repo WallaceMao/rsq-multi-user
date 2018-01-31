@@ -1,14 +1,16 @@
-package com.rishiqing.test.functional.rest
+package com.rishiqing.test.functional.rest.account
 
 import com.rishiqing.demo.util.http.RsqRestResponse
 import com.rishiqing.demo.util.http.RsqRestUtil
 import com.rishiqing.test.functional.BaseApi
+import spock.lang.Ignore
 import spock.lang.Unroll
 
 /**
- * Created by  on 2017/8/15.Wallace
+ * Created by on 2017/8/15.Wallace
  */
-//@Ignore
+@Ignore
+@Deprecated
 class ValidateUserFailSpec extends BaseApi {
 
     def setupSpec(){

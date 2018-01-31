@@ -45,10 +45,14 @@ class DomainUtil {
                 "noteFiles":[]
         ]
     }
-
-    static Map genRandomPlan(){
+    /**
+     * 随机生成一个计划
+     * @param params
+     * @return
+     */
+    static Map genRandomPlan(Map params = null){
         Date now = new Date()
-        [
+        Map resultMap = [
                 "name":"test plan ${now.getTime()}",
                 "attribute":"company",
                 "backgroundImage":"",
@@ -70,5 +74,69 @@ class DomainUtil {
                 "kanbanAllTList":[],
                 "userRoles":[]
                 ]
-   }
+        params?.each {k, v ->
+            resultMap[k] = v
+        }
+        resultMap
+    }
+    static Map genRandomCorpus(Map params = null){
+        Date now = new Date()
+        Map resultMap = [
+            "name": "test corpus ${now.getTime()}",
+            "type": "essays",
+            "cover": "https://images.timetask.cn/cover/default/corpus_v1/cover-default-8.png",
+            "displayOrder": 65535,
+            "isStar": false,
+            "attribute": "person",
+            "memberIds": 50,
+            "position": "bottom",
+            "userCorpus": [],
+            "isDefault": false,
+            "editControl": [:],
+            "lastSummaryAuthority": [:],
+            "allowEditBeforeDoc": true,
+            "allowAddBeforeDoc": true,
+            "mineSummarys": [],
+            "commonSummarys": [],
+            "atMeSummarys": [],
+            "userRoles": [],
+            "templateSetting": [
+                "summaryTemplate": []
+            ],
+            "_viewType_block": [
+                "sortType": null,
+                "allowEditBeforeDoc": true,
+                "allowAddBeforeDoc": true,
+                "selectedDocItem": null,
+                "date": null,
+                "creator": null,
+                "dept": null,
+                "parentId": null
+            ],
+            "_viewType_list": [
+                "sortType": null,
+                "allowEditBeforeDoc": true,
+                "allowAddBeforeDoc": true,
+                "selectedDocItem": null,
+                "date": null,
+                "creator": null,
+                "dept": null,
+                "parentId": null
+            ],
+            "_viewType_sidebar": [
+                "sortType": null,
+                "allowEditBeforeDoc": true,
+                "allowAddBeforeDoc": true,
+                "selectedDocItem": null,
+                "date": null,
+                "creator": null,
+                "dept": null,
+                "parentId": null
+            ]
+        ]
+        params?.each {k, v ->
+            resultMap[k] = v
+        }
+        resultMap
+    }
 }

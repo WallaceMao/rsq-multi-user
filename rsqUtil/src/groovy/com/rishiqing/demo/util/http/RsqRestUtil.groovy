@@ -60,6 +60,24 @@ class RsqRestUtil {
         doPost(url, delegateRequest)
     }
 
+    static RsqRestResponse put(String url, @DelegatesTo(RsqRestRequest) Closure closure){
+        RsqRestRequest delegateRequest = new RsqRestRequest()
+        def code = closure.rehydrate(delegateRequest, this, this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+
+        doPut(url, delegateRequest)
+    }
+
+    static RsqRestResponse delete(String url, @DelegatesTo(RsqRestRequest) Closure closure){
+        RsqRestRequest delegateRequest = new RsqRestRequest()
+        def code = closure.rehydrate(delegateRequest, this, this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+
+        doDelete(url, delegateRequest)
+    }
+
     static RsqRestResponse postJSON(String url, @DelegatesTo(RsqRestRequest) Closure closure){
         RsqRestRequest delegateRequest = new RsqRestRequest()
         def code = closure.rehydrate(delegateRequest, this, this)
@@ -86,11 +104,39 @@ class RsqRestUtil {
         new RsqRestResponse(response)
     }
 
+    static private RsqRestResponse doDelete(String url, RsqRestRequest delegateRequest){
+        String paramsUrl = handleQueryParams(url, delegateRequest)
+
+        HttpRequest unirestReq = Unirest.delete(paramsUrl)
+
+        handleHeader(unirestReq, delegateRequest)
+        handleCookie(delegateRequest)
+
+        HttpResponse<String> response = unirestReq.asString()
+
+        new RsqRestResponse(response)
+    }
+
     static private RsqRestResponse doPost(String url, RsqRestRequest delegateRequest){
         //  use Unirest to send request
         String paramsUrl = handleQueryParams(url, delegateRequest)
 
         HttpRequestWithBody unirestReq = Unirest.post(paramsUrl)
+
+        handleHeader(unirestReq, delegateRequest)
+        handleBody(unirestReq, delegateRequest)
+        handleCookie(delegateRequest)
+
+        HttpResponse<String> response = unirestReq.asString()
+
+        new RsqRestResponse(response)
+    }
+
+    static private RsqRestResponse doPut(String url, RsqRestRequest delegateRequest){
+        //  use Unirest to send request
+        String paramsUrl = handleQueryParams(url, delegateRequest)
+
+        HttpRequestWithBody unirestReq = Unirest.put(paramsUrl)
 
         handleHeader(unirestReq, delegateRequest)
         handleBody(unirestReq, delegateRequest)
