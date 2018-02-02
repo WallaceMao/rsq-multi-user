@@ -53,7 +53,9 @@ class TeamUserDataApiSpec extends BaseApi {
         registerUser << [
                 suiteEnv.teamUser1,
                 suiteEnv.teamUser2,
-                suiteEnv.teamUser3
+                suiteEnv.teamUser3,  // 直接邀请加入新团队的人
+                suiteEnv.teamUser4,  // 创建团队的人
+                suiteEnv.teamUser5   // 批量token邀请加入新团队的人
         ]
     }
 
@@ -97,8 +99,12 @@ class TeamUserDataApiSpec extends BaseApi {
      * target：user-3
      * user-1：邀请user-3加入team-b1——》邀请成功
      * user-3：接受user-1的邀请加入team-b1——加入成功
+     * user-1：邀请user-4加入team-b1——》邀请成功
+     * user-4：接受user-1的邀请加入team-b1——加入成功
+     * user-1：邀请user-5加入team-b1——》邀请成功
+     * user-5：接受user-1的邀请加入team-b1——加入成功
      */
-    def "user1 邀请 user3 加入 team1 --> user3 接受邀请并加入 team1"(){
+    def "user1 邀请 #invitedUser 加入 team1 --> #invitedUser 接受邀请并加入 team1"(){
         given:
         RsqRestResponse resp
 
@@ -106,22 +112,31 @@ class TeamUserDataApiSpec extends BaseApi {
         resp = TeamApi.loginAndDirectInviteAndJoinInTeam(
                 suiteEnv.team1ForCreate as Map,
                 suiteEnv.teamUser1 as Map,
-                suiteEnv.teamUser3 as Map)
+                invitedUser as Map)
         then:
         TeamApi.checkSuccess(resp)
 
         when: '获取user3的公司'
-        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser3 as Map)
+        resp = AccountApi.loginAndFetchUserSiblings(invitedUser as Map)
         then:
         AccountApi.checkFetchUserSiblings(resp, [teamList: [suiteEnv.team1ForCreate], noTeamList: []])
+
+        where:
+        invitedUser << [
+                suiteEnv.teamUser3,
+                suiteEnv.teamUser4,
+                suiteEnv.teamUser5
+        ]
     }
 
     /**
-     * user3 在 team1 团队中添加了私人文集、私人计划、公司文集、公司计划
-     * user3 然后退出team1
+     * user3和user4 在 team1 团队中添加了私人文集、私人计划、公司文集、公司计划
+     * user3和user4 然后退出team1
      * 检查user3 私人文集、私人计划可以带走，公司文集、公司计划不能带走
+     * 检查user4 私人文集、私人计划可以带走，公司文集、公司计划不能带走
      */
-    def "user3 在 team1 中添加私人和公司的文集、计划 --> user3 退出 team1 --> 检查user3" (){
+    @Unroll
+    def "#teamMember 在 team1 中添加私人和公司的文集、计划 --> #teamMember 退出 team1 --> 检查 #teamMember" (){
         given:
         RsqRestResponse resp
         Map privateAttribute = [attribute: 'person']
@@ -132,7 +147,7 @@ class TeamUserDataApiSpec extends BaseApi {
         Map corpusPublic
 
         when: '登录'
-        resp = AccountApi.login(suiteEnv.teamUser3 as Map)
+        resp = AccountApi.login(teamMember as Map)
         then:
         AccountApi.checkLogin(resp)
 
@@ -145,7 +160,7 @@ class TeamUserDataApiSpec extends BaseApi {
         when: '添加成员'
         PlanApi.addPlanMember([id: planPrivate.id, members: [
                 suiteEnv.teamUser1,
-                suiteEnv.teamUser3
+                teamMember
         ]])
         then:
         PlanApi.checkAddPlanMember(resp, [userRolesLength: 2])
@@ -159,7 +174,7 @@ class TeamUserDataApiSpec extends BaseApi {
         when: '添加成员'
         PlanApi.addPlanMember([id: planPublic.id, members: [
                 suiteEnv.teamUser1,
-                suiteEnv.teamUser3
+                teamMember
         ]])
         then:
         PlanApi.checkAddPlanMember(resp, [userRolesLength: 2])
@@ -178,7 +193,7 @@ class TeamUserDataApiSpec extends BaseApi {
         when: '私人文集添加成员'
         CorpusApi.addCorpusMember([id: corpusPrivate.id, members: [
                 suiteEnv.teamUser1,
-                suiteEnv.teamUser3
+                teamMember
         ]])
         then:
         CorpusApi.checkAddCorpusMember(resp, [userRolesLength: 2])
@@ -192,7 +207,7 @@ class TeamUserDataApiSpec extends BaseApi {
         when: '公司文集添加成员'
         CorpusApi.addCorpusMember([id: corpusPublic.id, members: [
                 suiteEnv.teamUser1,
-                suiteEnv.teamUser3
+                teamMember
         ]])
         then:
         CorpusApi.checkAddCorpusMember(resp)
@@ -218,6 +233,18 @@ class TeamUserDataApiSpec extends BaseApi {
         resp = CorpusApi.getCorpusList()
         then: '退出团队后，文集应该只剩下1个文集'
         CorpusApi.checkGetCorpusList(resp, [corpusListLength: 1])
+
+        when: '退出登录'
+        resp = AccountApi.logout()
+        then:
+        AccountApi.checkLogout(resp)
+
+        where:
+        teamMember << [
+                suiteEnv.teamUser3,
+                suiteEnv.teamUser4,
+                suiteEnv.teamUser5
+        ]
     }
 
     /**
@@ -225,7 +252,6 @@ class TeamUserDataApiSpec extends BaseApi {
      * user-2：邀请user-3加入team-2——》邀请成功
      * user-3：接受user-2的邀请加入team-2——加入成功
      */
-    @Ignore
     def "user2 邀请 user3 加入 team2 --> user3 接受邀请并加入 team2"(){
         given:
         RsqRestResponse resp
@@ -242,13 +268,121 @@ class TeamUserDataApiSpec extends BaseApi {
         resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser3 as Map)
         then:
         AccountApi.checkFetchUserSiblings(resp, [teamList: [suiteEnv.team2ForCreate], noTeamList: []])
+
+        when: '退出登录'
+        resp = AccountApi.logout()
+        then:
+        AccountApi.checkLogout(resp)
     }
 
     /**
      * 检查user3的私人文集、私人计划是否带到team2
      */
-    @Ignore
     def "检查 user3 的私人文集、私人计划是否带到 team2"(){
-        //  TODO
+        given:
+        RsqRestResponse resp
+
+        when: '登录'
+        resp = AccountApi.login(suiteEnv.teamUser3 as Map)
+        then:
+        AccountApi.checkLogin(resp)
+
+        when: '获取计划列表'
+        resp = PlanApi.getPlanGroupList()
+        then: '加入新的团队后，1个私人计划应该带到新的团队'
+        PlanApi.checkGetPlanGroupList(resp, [planListLength: 1])
+
+        when: '获取文集列表'
+        resp = CorpusApi.getCorpusList()
+        then: '加入新的团队后，1个私人文集应该带到新的团队'
+        CorpusApi.checkGetCorpusList(resp, [corpusListLength: 1])
+    }
+
+    /**
+     * user4新创建团队team4
+     */
+    def "user4创建团队team4"(){
+        when: '创建团队'
+        RsqRestResponse resp = TeamApi.loginAndCreateTeam(
+                suiteEnv.teamUser4 as Map,
+                suiteEnv.team4ForCreate as Map)
+        //  等待创建团队的异步操作
+        Thread.sleep(3000)
+        then: '验证创建团队'
+        TeamApi.checkCreateTeam(resp)
+    }
+
+    /**
+     * 检查 user4 的私人文集、私人计划是否带到 team4
+     */
+    def "检查 user4 的私人文集、私人计划是否带到 team4"(){
+        given:
+        RsqRestResponse resp
+
+        when: '登录'
+        resp = AccountApi.login(suiteEnv.teamUser4 as Map)
+        then:
+        AccountApi.checkLogin(resp)
+
+        when: '获取计划列表'
+        resp = PlanApi.getPlanGroupList()
+        then: '创建新的团队后，1个私人计划应该带到新的团队'
+        PlanApi.checkGetPlanGroupList(resp, [planListLength: 1])
+
+        when: '获取文集列表'
+        resp = CorpusApi.getCorpusList()
+        then: '创建新的团队后，1个私人文集应该带到新的团队'
+        CorpusApi.checkGetCorpusList(resp, [corpusListLength: 1])
+    }
+
+    /**
+     * target：user-5
+     * user-2：批量邀请user-5加入team-2——》邀请成功
+     * user-5：接受user-2的邀请加入team-2——加入成功
+     */
+    def "user2 批量邀请 user5 加入 team2 --> user5 接受邀请并加入 team2"(){
+        given:
+        RsqRestResponse resp
+
+        when: 'user2登录邀请user5加入team2'
+        resp = TeamApi.loginAndBatchInviteAndJoinTeamOutside(
+                suiteEnv.team1ForCreate as Map,
+                suiteEnv.teamUser2 as Map,
+                [suiteEnv.teamUser5 as Map])
+        then:
+        TeamApi.checkSuccess(resp)
+
+        when: '获取user5的公司'
+        resp = AccountApi.loginAndFetchUserSiblings(suiteEnv.teamUser5 as Map)
+        then:
+        AccountApi.checkFetchUserSiblings(resp, [teamList: [suiteEnv.team2ForCreate], noTeamList: []])
+
+        when: '退出登录'
+        resp = AccountApi.logout()
+        then:
+        AccountApi.checkLogout(resp)
+    }
+
+    /**
+     * 检查user5的私人文集、私人计划是否带到team2
+     */
+    def "检查 user5 的私人文集、私人计划是否带到 team2"(){
+        given:
+        RsqRestResponse resp
+
+        when: '登录'
+        resp = AccountApi.login(suiteEnv.teamUser5 as Map)
+        then:
+        AccountApi.checkLogin(resp)
+
+        when: '获取计划列表'
+        resp = PlanApi.getPlanGroupList()
+        then: '加入新的团队后，1个私人计划应该带到新的团队'
+        PlanApi.checkGetPlanGroupList(resp, [planListLength: 1])
+
+        when: '获取文集列表'
+        resp = CorpusApi.getCorpusList()
+        then: '加入新的团队后，1个私人文集应该带到新的团队'
+        CorpusApi.checkGetCorpusList(resp, [corpusListLength: 1])
     }
 }

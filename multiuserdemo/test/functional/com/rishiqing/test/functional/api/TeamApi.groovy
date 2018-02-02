@@ -229,6 +229,37 @@ class TeamApi {
 
         resp
     }
+    /**
+     * teamMember邀请批量邀请加入团队
+     * 被邀请人不需要登录直接根据token加入团队
+     * teamMember是团队中的人，邀请别人加入团队
+     * inviteParams是被邀请人的参数
+     * @param teamMember
+     * @param inviteParams
+     * @return
+     */
+    public static final RsqRestResponse loginAndBatchInviteAndJoinTeamOutside(Map team, Map teamMember, List invitedMembers){
+        //  邀请人登录
+        RsqRestResponse resp = AccountApi.login(teamMember)
+        AccountApi.checkLogin(resp)
+        //  邀请人邀请别人
+        resp = batchInvite(invitedMembers)
+        List inviteResultList = checkBatchInvite(resp, [inviteSuccess: invitedMembers.size()])
+        //  保存邀请token
+        invitedMembers.eachWithIndex {it, index ->
+            it.t = inviteResultList[index].t
+        }
+        //  邀请人退出
+        resp = AccountApi.logout()
+        AccountApi.checkLogout(resp)
+
+        invitedMembers.each {it ->
+            //  受邀请人不需要登录接受加入团队
+            resp = joinInTeamOutside([t: it.t], it as Map)
+            checkJoinInTeamOutside(resp)
+        }
+        resp
+    }
 
     public static final RsqRestResponse loginAndBatchInviteAndJoinInTeam(Map team, Map teamMember, List invitedMembers){
         //  邀请人登录
